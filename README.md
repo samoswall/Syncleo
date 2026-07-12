@@ -4,6 +4,8 @@ Integration of Polaris and Hommyn devices into Home Assistant using UDP protocol
 Интеграция для Home Assistant поддерживающая полное управление устройствами экосистем<br>
 Polaris IQ Home и Hommyn c использованием протокола UDP
 
+![](/logo.png)
+
 Также поддерживаются все бренды использующие SDK Syncleo и имеющие mdns `_syncleo._udp.local.`
 
 Локальное управление (внутри сети) работает одновременно с облаком, приложением и(или) MQTT, не мешая им.
