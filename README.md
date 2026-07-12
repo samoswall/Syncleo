@@ -103,7 +103,7 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
         icon="mdi:kettle"                                             # иконка, можно не ставить, а описать в icons.json
     ),
 ```
-для сенсоров все как и в требованиях НА, только добавлены:
+для сенсоров все как и в требованиях описания сущностей в НА, только добавлены:
 ```
     "temperature": SyncleoSensorDescription(
         key="temperature",
@@ -115,4 +115,45 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
         func=parse_temp,                                         # Функция для парсинга
         icon="mdi:thermometer"
     ),
+```
+Так же в файле `entity_description.py` описаны функции для парсинга. (некоторые дублируются, потом будут унифицированы)
+
+4. В интеграцию добавлено много логов для отладки.
+Удобно смотреть online например с помощью аддона Terminal & SSH, введя в консоли `ha core logs -f`
+Что интересного в логах для отладки:
+1. Обнаружение устройства:
+```
+Discovered device via zeroconf: ZeroconfServiceInfo(
+  ip_address=ZeroconfIPv4Address('192.168.1.2'),
+  ip_addresses=[ZeroconfIPv4Address('192.168.1.2'), ZeroconfIPv6Address('fe80::0000:0000:0000:0000%3')],
+  port=58259,
+  hostname='1234567890ab.local.',
+  type='_syncleo._udp.local.',
+  name='1234567890ab._syncleo._udp.local.',
+  properties={
+    'public': '11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff',
+    'curve': '29',
+    'vendor': 'Polaris',
+    'basetype': '86',
+    'devtype': '86',
+    'firmware': '2.33',
+    'protocol': '2',
+    'macaddr': '12:34:56:78:90:ab'
+})
+```
+2. Публикация статусов при установке соединения:
+```
+Message from the device 12:34:56:78:90:ab: CMD_DEVICE_DIAGNOSTICS | Data: 000000000000000000000000000000000000000000000
+Message from the device 12:34:56:78:90:ab: CMD_ACCESS_CONTROL | Data: 00
+Message from the device 12:34:56:78:90:ab: CMD_OPEN_MQTT | Data: 0000--Не публикуйте это, тут Ip, логин и пароль от mqtt брокера--0000
+Message from the device 12:34:56:78:90:ab: CMD_MODE | Data: 00
+Message from the device 12:34:56:78:90:ab: CMD_ERROR | Data: 00
+Message from the device 12:34:56:78:90:ab: CMD_TARGET_TEMPERATURE | Data: 0000
+Message from the device 12:34:56:78:90:ab: CMD_CHILD_LOCK | Data: 00
+Message from the device 12:34:56:78:90:ab: CMD_VOLUME | Data: 01
+Message from the device 12:34:56:78:90:ab: CMD_BACKLIGHT | Data: 01
+Message from the device 12:34:56:78:90:ab: CMD_NIGHT | Data: 00
+Message from the device 12:34:56:78:90:ab: CMD_CURRENT_TEMPERATURE | Data: 3900         # младший байт - целая часть числа, старший байт - дробная часть 
+Message from the device 12:34:56:78:90:ab: CMD_HARDWARE | Data: 0a0a07
+Message from the device 12:34:56:78:90:ab: CMD_PROGRAM_DATA | Data: 00ff1115            # первый байт обозначает program_data 0, далее цвет RGB       
 ```
