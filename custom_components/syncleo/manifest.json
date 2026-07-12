@@ -1,0 +1,13 @@
+{
+  "domain": "syncleo",
+  "name": "Syncleo",
+  "codeowners": ["@samoswall"],
+  "config_flow": true,
+  "dependencies": ["zeroconf"],
+  "documentation": "https://github.com/samoswall/syncleo",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "requirements": ["cryptography"],
+  "version": "0.1.0",
+  "zeroconf": ["_syncleo._udp.local."]
+}
