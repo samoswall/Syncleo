@@ -53,7 +53,7 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
 Добавлять новые устройства просто! На это был сделан упор для облегчения поддержки и сопровождения!
 
 1. В интеграции имеется файл `const.py` в котором перечислены все поддерживаемые приложением устройства Polaris и Hommyn
-```
+```json
 86:  {"model": "PWK-1725CGLD", "class": "kettle"},
 ```
 Тут все просто - тип, модель и класс устройства.
@@ -61,7 +61,7 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
 
 2. В файле `device_configs.py` перечисляется в 2 разделах (POLARIS_DEVICE_CONFIGS и HOMMYN_DEVICE_CONFIGS) какие сущности содержит устройство
 
-```
+```json
 # Чайник
     86: {
         "water_heater": ["kettle"],
@@ -88,7 +88,7 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
 
 
 3. В файле `entity_description.py` описаны все варианты существующих сущностей всех устройств Polaris и Hommyn с функциями парсинга.
-```
+```python
 # Пример чайника без режимов "high_demand":"2" и "gas":"6" Кипячение с удержанием и Чайная церемония
     "kettle": SyncleoWaterHeaterDescription(  # kettle - имя сущности, имена все разные, если есть отличия       
         key="kettle",                         # уникальный ключ описания - нужен НА
@@ -104,7 +104,7 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
     ),
 ```
 для сенсоров все как и в требованиях описания сущностей в НА, только добавлены:
-```
+```python
     "temperature": SyncleoSensorDescription(
         key="temperature",
         translation_key="temperature_sensor",
@@ -122,7 +122,7 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
 Удобно смотреть online например с помощью аддона Terminal & SSH, введя в консоли `ha core logs -f`
 Что интересного в логах для отладки:
 1. Обнаружение устройства:
-```
+```python
 Discovered device via zeroconf: ZeroconfServiceInfo(
   ip_address=ZeroconfIPv4Address('192.168.1.2'),
   ip_addresses=[ZeroconfIPv4Address('192.168.1.2'), ZeroconfIPv6Address('fe80::0000:0000:0000:0000%3')],
@@ -142,7 +142,7 @@ Discovered device via zeroconf: ZeroconfServiceInfo(
 })
 ```
 2. Публикация статусов при установке соединения:
-```
+```python
 Message from the device 12:34:56:78:90:ab: CMD_DEVICE_DIAGNOSTICS | Data: 000000000000000000000000000000000000000000000
 Message from the device 12:34:56:78:90:ab: CMD_ACCESS_CONTROL | Data: 00
 Message from the device 12:34:56:78:90:ab: CMD_OPEN_MQTT | Data: 0000--Не публикуйте это, тут Ip, логин и пароль от mqtt брокера--0000
@@ -153,7 +153,7 @@ Message from the device 12:34:56:78:90:ab: CMD_CHILD_LOCK | Data: 00
 Message from the device 12:34:56:78:90:ab: CMD_VOLUME | Data: 01
 Message from the device 12:34:56:78:90:ab: CMD_BACKLIGHT | Data: 01
 Message from the device 12:34:56:78:90:ab: CMD_NIGHT | Data: 00
-Message from the device 12:34:56:78:90:ab: CMD_CURRENT_TEMPERATURE | Data: 3900         # младший байт - целая часть числа, старший байт - дробная часть 
+Message from the device 12:34:56:78:90:ab: CMD_CURRENT_TEMPERATURE | Data: 3900  # младший байт - целая часть числа, старший байт - дробная часть 
 Message from the device 12:34:56:78:90:ab: CMD_HARDWARE | Data: 0a0a07
-Message from the device 12:34:56:78:90:ab: CMD_PROGRAM_DATA | Data: 00ff1115            # первый байт обозначает program_data 0, далее цвет RGB       
+Message from the device 12:34:56:78:90:ab: CMD_PROGRAM_DATA | Data: 00ff1115     # первый байт обозначает program_data 0, далее цвет RGB       
 ```
