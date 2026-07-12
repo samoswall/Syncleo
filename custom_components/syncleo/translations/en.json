@@ -1,0 +1,21 @@
+{
+  "config": {
+    "abort": {
+      "no_devices_found": "No Syncleo devices found. Make sure they are powered on in the network.",
+      "already_configured": "This device is already added to Home Assistant.",
+      "unknown_device": "Device did not provide a MAC address."
+    },
+    "error": {
+      "token_required": "Token is required to add the device."
+    },
+    "step": {
+      "confirm": {
+        "title": "Add Syncleo Device",
+        "description": "Discovered device: **{vendor}** (MAC: {mac}).\nEnter the device token to proceed.",
+        "data": {
+          "token": "Device Token"
+        }
+      }
+    }
+  }
+}
