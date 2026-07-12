@@ -54,7 +54,9 @@ rusclimate/67/aaaabbbbccccddddeeeeffffeeeedddd/state
 
 1. В интеграции имеется файл `const.py` в котором перечислены все поддерживаемые приложением устройства Polaris и Hommyn
 ```json
+...
 86:  {"model": "PWK-1725CGLD", "class": "kettle"},
+...
 ```
 Тут все просто - тип, модель и класс устройства.
 
