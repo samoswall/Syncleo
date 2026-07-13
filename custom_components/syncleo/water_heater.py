@@ -1,4 +1,3 @@
-# water_heater.py
 import logging
 import struct
 from typing import Optional
@@ -60,23 +59,26 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         self._attr_temperature_unit = UnitOfTemperature.CELSIUS
         self._attr_min_temp = self._min_temp
         self._attr_max_temp = self._max_temp
+        self._attr_target_temperature_high = self._max_temp
+        self._attr_target_temperature_low = self._min_temp
         self._attr_target_temperature = self._max_temp
         self._attr_operation_list = list(self._operation_list.keys())
+        self._attr_target_temperature_step = 1.0
         
         # Инициализируем текущую температуру
         self._attr_current_temperature = None
         self._attr_current_operation = None
         
         # Определяем поддерживаемые функции
-        features = WaterHeaterEntityFeature.TARGET_TEMPERATURE
+        features = WaterHeaterEntityFeature.ON_OFF
         if len(self._operation_list) > 1:
-            features |= WaterHeaterEntityFeature.OPERATION_MODE
+            features |= WaterHeaterEntityFeature.OPERATION_MODE | WaterHeaterEntityFeature.TARGET_TEMPERATURE
         self._attr_supported_features = features
         self._attr_has_entity_name = True
         self._attr_unique_id = slugify(f"{device.mac}_{key}")
         if device.vendor == 'Polaris':
             self.entity_id = f"water_heater.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Hommyn':
+        if device.vendor == 'Rusclimate':
             self.entity_id = f"water_heater.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
@@ -143,11 +145,22 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         temperature = kwargs.get("temperature")
         if temperature is None:
             return
+
+        # Округляем и ограничиваем температуру
+        temperature = max(self._min_temp, min(self._max_temp, int(temperature)))
         self._attr_target_temperature = temperature
+        if self.coordinator.data:
+            new_data = dict(self.coordinator.data)
+            temp_bytes = temperature.to_bytes(2, 'little')
+            new_data["CMD_TARGET_TEMPERATURE"] = temp_bytes.hex()
+            # Обновляем данные координатора
+            self.coordinator.data = new_data
+            # Уведомляем подписчиков (включая эту сущность)
+            self.coordinator.async_set_updated_data(new_data)
         payload = bytes([int(temperature), 0])
         await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
         self.schedule_update_ha_state()
-        pass
+
 
     async def async_set_operation_mode(self, operation_mode: str):
         """Устанавливает режим работы."""
@@ -165,4 +178,3 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
             await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
         payload = bytes([int(mode_value)])
         await self.async_send_command(CMD_MODE, payload)
-        pass

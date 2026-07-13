@@ -100,7 +100,7 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
                 f"humidifier.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
             )
-        if device.vendor == "Hommyn":
+        if device.vendor == "Rusclimate":
             self.entity_id = (
                 f"humidifier.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
@@ -185,21 +185,7 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
             return
 
         if self.available:
-            # Обновляем значения
-            new_current = self.current_humidity
-            new_target = self.target_humidity
-            new_mode = self.mode
-            new_is_on = self.is_on
-            
-            if (new_current != self._attr_current_humidity or 
-                new_target != self._attr_target_humidity or 
-                new_mode != self._attr_mode or
-                new_is_on != self._attr_is_on):
-                self._attr_current_humidity = new_current
-                self._attr_target_humidity = new_target
-                self._attr_mode = new_mode
-                self._attr_is_on = new_is_on
-                _LOGGER.debug("Updated humidifier state: mode=%s, is_on=%s", new_mode, new_is_on)
+                # Просто вызываем обновление состояния
                 self.async_write_ha_state()
 
     async def async_set_humidity(self, humidity: int) -> None:
@@ -210,6 +196,14 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
 
         humidity = max(self._min_humidity, min(self._max_humidity, humidity))
         self._attr_target_humidity = humidity
+        if self.coordinator.data:
+            new_data = dict(self.coordinator.data)
+            humid_bytes = humidity.to_bytes(2, 'little')
+            new_data["CMD_TARGET_HUMIDITY"] = humid_bytes.hex()
+            # Обновляем данные координатора
+            self.coordinator.data = new_data
+            # Уведомляем подписчиков (включая эту сущность)
+            self.coordinator.async_set_updated_data(new_data)
         payload = bytes([int(humidity), 0])
         await self.async_send_command(CMD_TARGET_HUMIDITY, payload)
         self.schedule_update_ha_state()

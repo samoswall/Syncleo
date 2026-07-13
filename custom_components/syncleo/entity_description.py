@@ -3,6 +3,7 @@ from typing import Any, Callable, Dict, Optional, List
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.humidifier import HumidifierEntity, HumidifierEntityDescription, HumidifierDeviceClass
+from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACAction, HVACMode
 from homeassistant.const import (
     EntityCategory,
     PERCENTAGE,
@@ -66,7 +67,7 @@ def parse_power(data: bytes) -> int:
 def parse_weight(data: bytes) -> float:
     """Парсинг веса."""
     if len(data) >= 2:
-        return int.from_bytes(data[:2], 'little') / 100.0
+        return int.from_bytes(data[:2], 'little')
     return 0.0
 
 def parse_time(data: bytes) -> int:
@@ -407,7 +408,7 @@ class SyncleoSensorDescription(SyncleoEntityDescription):
     device_class: Optional[SensorDeviceClass] = None
     native_unit_of_measurement: Optional[str] = None
     state_class: Optional[SensorStateClass] = None
-
+    expendables_index: str = "0"
 
 SENSOR_DESCRIPTIONS = {
     "temperature": SyncleoSensorDescription(
@@ -478,7 +479,7 @@ SENSOR_DESCRIPTIONS = {
         native_unit_of_measurement=UnitOfTime.HOURS,
         state_class=SensorStateClass.MEASUREMENT,
         coordinator_state="CMD_EXPENDABLES",
-        func=parse_hex_to_int,
+        expendables_index = "0",
         icon="mdi:filter"
     ),
     "clean_retain": SyncleoSensorDescription(
@@ -488,7 +489,7 @@ SENSOR_DESCRIPTIONS = {
         native_unit_of_measurement=UnitOfTime.HOURS,
         state_class=SensorStateClass.MEASUREMENT,
         coordinator_state="CMD_EXPENDABLES",
-        func=parse_hex_to_int,
+        expendables_index = "1",
         icon="mdi:cup-water"
     ),
     "firmware": SyncleoSensorDescription(
@@ -633,6 +634,54 @@ NUMBER_DESCRIPTIONS = {
     ),
 }
 
+# ---------- CLIMATE ----------
+@dataclass(frozen=True)
+class SyncleoClimateDescription(SyncleoEntityDescription):
+    """Описание для Climate."""
+    
+    fan_mode: Optional[str] = None
+    fan_modes: Dict[str, str] = field(default_factory=dict)
+    preset_mode: Optional[str] = None
+    preset_modes: Dict[str, str] = field(default_factory=dict)
+    hvac_modes: list | None = None
+    supported_features: int | None = None
+    min_temp: int = 10
+    max_temp: int = 40
+    temp_step: int = 1
+    swing_mode: Optional[str] = None
+    swing_modes: Dict[str, str] = field(default_factory=dict)
+    coordinator_current_temperature: Optional[str] = None
+    coordinator_target_temperature: Optional[str] = None
+    coordinator_speed: Optional[str] = None
+    coordinator_mode: Optional[str] = None
+
+
+CLIMATE_DESCRIPTIONS = {
+    "climate_fan_only": SyncleoClimateDescription(
+        name = "Climate",
+        key = "climate_fan_only",
+        translation_key = "climate",
+        fan_mode = "off",
+        fan_modes = {"off": "0", "1_speed": "1", "2_speed": "2", "3_speed": "3", "4_speed": "4", "5_speed": "5", "6_speed": "6", "7_speed": "7"},
+        preset_mode = "passive",
+        preset_modes = {"hands": "1", "auto": "2", "night": "3", "turbo": "4", "passive": "5"},
+        hvac_modes = [HVACMode.OFF, HVACMode.FAN_ONLY],
+        supported_features = (
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.PRESET_MODE
+            | ClimateEntityFeature.FAN_MODE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
+        ),
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_speed="CMD_SPEED",
+        coordinator_mode="CMD_MODE",
+        min_temp = 5,
+        max_temp = 25,
+        device_class = None,
+    ),
+}
 
 # ---------- VACUUM ----------
 @dataclass(frozen=True)

@@ -73,7 +73,7 @@ class SyncleoNumberEntity(SyncleoEntity, NumberEntity):
                 f"number.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
             )
-        if device.vendor == "Hommyn":
+        if device.vendor == "Rusclimate":
             self.entity_id = (
                 f"number.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"

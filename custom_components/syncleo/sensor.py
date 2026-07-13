@@ -53,6 +53,7 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
             self._attr_translation_key = desc.translation_key
         
         self._state_key = getattr(desc, 'coordinator_state', None)
+        self._expendables_index = getattr(desc, 'expendables_index', "0")
         self._func = getattr(desc, 'func', None)
         self._attr_has_entity_name = True
         
@@ -63,7 +64,7 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
         self._attr_unique_id = slugify(f"{device.mac}_{key}")
         if device.vendor == 'Polaris':
             self.entity_id = f"sensor.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Hommyn':
+        if device.vendor == 'Rusclimate':
             self.entity_id = f"sensor.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
@@ -82,7 +83,13 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
         if not self._state_key:
             return None
         
-        value = self._get_state_from_coordinator(self._state_key, self._func)
+        if self._state_key == "CMD_EXPENDABLES":
+            if not self.coordinator.data:
+                return None
+            value_data = self.coordinator.data.get("CMD_EXPENDABLES", {})
+            value = value_data.get(self._expendables_index)
+        else:
+            value = self._get_state_from_coordinator(self._state_key, self._func)
         return value
     
     def _handle_coordinator_update(self) -> None:

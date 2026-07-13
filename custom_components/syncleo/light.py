@@ -53,11 +53,11 @@ class SyncleoLightEntity(SyncleoEntity, LightEntity):
         self._attr_color_mode = ColorMode.RGB
         self._attr_supported_color_modes = {ColorMode.RGB}
         self._attr_is_on = False
-        self._attr_brightness = 0
+        self._attr_brightness = 255
             
         if device.vendor == 'Polaris':
             self.entity_id = f"light.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        elif device.vendor == 'Hommyn':
+        elif device.vendor == 'Rusclimate':
             self.entity_id = f"light.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property

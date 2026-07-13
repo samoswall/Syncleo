@@ -43,7 +43,7 @@ class SyncleoDevice:
             dev_id = int(self.devtype)
             if dev_id in POLARIS_DEVICE:
                 return POLARIS_DEVICE[dev_id]["class"]
-        elif self.vendor == "Hommyn" and self.devtype and self.devtype.isdigit():
+        elif self.vendor == "Rusclimate" and self.devtype and self.devtype.isdigit():
             dev_id = int(self.devtype)
             if dev_id in HOMMYN_DEVICE:
                 return HOMMYN_DEVICE[dev_id]["class"]
@@ -56,7 +56,7 @@ class SyncleoDevice:
             dev_id = int(self.devtype)
             if dev_id in POLARIS_DEVICE:
                 return POLARIS_DEVICE[dev_id]["model"]
-        elif self.vendor == "Hommyn" and self.devtype and self.devtype.isdigit():
+        elif self.vendor == "Rusclimate" and self.devtype and self.devtype.isdigit():
             dev_id = int(self.devtype)
             if dev_id in HOMMYN_DEVICE:
                 return HOMMYN_DEVICE[dev_id]["model"]
@@ -87,7 +87,7 @@ class SyncleoDevice:
             if dev_id in POLARIS_DEVICE_CONFIGS:
                 config = POLARIS_DEVICE_CONFIGS[dev_id]
         
-        elif self.vendor == "Hommyn" and self.devtype and self.devtype.isdigit():
+        elif self.vendor == "Rusclimate" and self.devtype and self.devtype.isdigit():
             dev_id = int(self.devtype)
             if dev_id in HOMMYN_DEVICE_CONFIGS:
                 config = HOMMYN_DEVICE_CONFIGS[dev_id]

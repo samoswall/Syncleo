@@ -374,17 +374,27 @@ class SyncleoCoordinator(DataUpdateCoordinator):
                         if data:
                             index = data[0]
                             payload_hex = data[1:].hex() if len(data) > 1 else ""
-                            
+#                            programs = {}
                             programs = dict(new_state.get("CMD_PROGRAM_DATA", {}))
                             programs[str(index)] = payload_hex
                             
                             new_state["CMD_PROGRAM_DATA"] = programs
                             _LOGGER.debug("Обновлен Program Data: %s", programs)
+                    # 6. Обработка CMD_EXPENDABLES (0x22)
+                    elif cmd == 0x22: 
+                        if data:
+                            filter_data = {}
+                            for i in range(6):
+                                offset = i * 2
+                                if len(data) >= offset + 2:
+                                    filter_bytes = int.from_bytes(data[offset:offset + 2], 'little')
+                                    filter_data[str(i)] = filter_bytes
+                            new_state["CMD_EXPENDABLES"] = filter_data
                     else:
                         # Для всех остальных команд просто сохраняем hex строки
                         new_state[cmd_name] = data.hex()
                     
-                    # 6. Пушим новые данные в Home Assistant
+                    # 7. Пушим новые данные в Home Assistant
                     if cmd != 0xFF:
                         self.async_set_updated_data(new_state)
                         _LOGGER.debug("Координатор: %s", self.data)

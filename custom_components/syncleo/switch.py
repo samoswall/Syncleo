@@ -65,7 +65,7 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
         
         if device.vendor == 'Polaris':
             self.entity_id = f"switch.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Hommyn':
+        if device.vendor == 'Rusclimate':
             self.entity_id = f"switch.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property

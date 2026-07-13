@@ -54,7 +54,7 @@ class SyncleoSelectEntity(SyncleoEntity, SelectEntity):
         self._attr_unique_id = slugify(f"{device.mac}_{key}")
         if device.vendor == 'Polaris':
             self.entity_id = f"select.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Hommyn':
+        if device.vendor == 'Rusclimate':
             self.entity_id = f"select.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
