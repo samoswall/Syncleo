@@ -1,8 +1,8 @@
 {
   "config": {
     "abort": {
-      "no_devices_found": "No Syncleo devices found. Make sure they are powered on in the network.",
-      "already_configured": "This device is already added to Home Assistant.",
+      "no_devices_found": "Syncleo devices not found. Make sure they are powered on and connected to the network.",
+      "already_configured": "This device has already been added to Home Assistant.",
       "unknown_device": "Device did not provide a MAC address."
     },
     "error": {
@@ -11,11 +11,1282 @@
     "step": {
       "confirm": {
         "title": "Add Syncleo Device",
-        "description": "Discovered device: **{vendor}** (MAC: {mac}).\nEnter the device token to proceed.",
+        "description": "Detected device: **{vendor}** (MAC: {mac}).\nEnter the device token to control it.",
         "data": {
-          "token": "Device Token"
+          "token": "Device token"
         }
       }
     }
+  },
+  "entity": {
+    "switch": {
+      "sound_switch": {
+        "name": "Sound"
+      },
+      "power_switch": {
+        "name": "Power"
+      },
+      "child_lock_switch": {
+        "name": "Child Lock"
+      },
+      "backlight_switch": {
+        "name": "Backlight"
+      },
+      "backlight_bottom_switch": {
+        "name": "Bottom Backlight"
+      },
+      "ionization_switch": {
+        "name": "Ionization"
+      },
+      "ozonation_switch": {
+        "name": "Ozonation"
+      },
+      "warm_stream_switch": {
+        "name": "Warm Steam"
+      },
+      "keepwarm_switch": {
+        "name": "Keep Warm"
+      },
+      "ultraviolet_switch": {
+        "name": "Ultraviolet"
+      },
+      "smart_mode_switch": {
+        "name": "Smart Mode"
+      },
+      "bss_mode_switch": {
+        "name": "Antibacterial Cleaning"
+      },
+      "smart_mode_switch": {
+        "name": "Massage"
+      },
+      "damper_switch": {
+        "name": "Recirculation"
+      },
+      "damper_heater_switch": {
+        "name": "Open Window Detection"
+      },
+      "display_off_heater_switch": {
+        "name": "Auto Display Off"
+      },
+      "half_power_heater_switch": {
+        "name": "Half Power"
+      },
+      "backlight_bright_switch": {
+        "name": "Brightness 50/100"
+      },
+      "turbo_switch": {
+        "name": "Turbo Mode"
+      },
+      "night_switch": {
+        "name": "Night Mode"
+      },
+      "night_light_switch": {
+        "name": "Night Light"
+      },
+      "self_cleaning_switch": {
+        "name": "Self Cleaning"
+      },
+      "delicate_blowing_switch": {
+        "name": "Delicate Blowing"
+      },
+      "eco_mode_switch": {
+        "name": "Eco Mode"
+      },
+      "auto_heater_switch": {
+        "name": "Auto Heating"
+      },
+      "quiet_mode_switch": {
+        "name": "Quiet Mode"
+      },
+      "no_frost_switch": {
+        "name": "Anti-Freeze"
+      },
+      "anti_fingus_switch": {
+        "name": "Fungus Prevention"
+      },
+      "wet_dry_switch": {
+        "name": "Wet & Dry Cleaning"
+      },
+      "carpet_booster_switch": {
+        "name": "Carpet Booster"
+      },
+      "carpet_cleaning_switch": {
+        "name": "Carpet Cleaning"
+      },
+      "effect_3d_switch": {
+        "name": "3D Effect"
+      },
+      "winter_storage_switch": {
+        "name": "Winter Storage"
+      },
+      "night_light_mode_switch": {
+        "name": "Night Light"
+      },
+      "auto_sprinkle_switch": {
+        "name": "Auto Sprinkle"
+      },
+      "auto_rotation_switch": {
+        "name": "Auto Rotation"
+      }
+    },
+    "water_heater": {
+      "kettle": {
+        "name": "Heating",
+        "state": {
+          "off": "Off",
+          "performance": "Boiling",
+          "high_demand": "Boiling with Keep Warm",
+          "electric": "Heating",
+          "heat_pump": "Heating with Keep Warm",
+          "eco": "IQ Boiling",
+          "gas": "Tea Ceremony"
+        }
+      },
+      "water_boiler": {
+        "name": "Boiler",
+        "state": {
+          "off": "Off",
+          "performance": "Low",
+          "electric": "Medium",
+          "heat_pump": "High",
+          "eco": "Eco",
+          "gas": "Anti-Freeze"
+        }
+      }
+    },
+    "humidifier": {
+      "humidifier": {
+        "name": "Humidifier",
+        "state_attributes": {
+          "mode": {
+            "state": {
+              "auto": "Auto",
+              "comfort": "Health",
+              "baby": "Baby",
+              "sleep": "Night",
+              "boost": "Boost",
+              "home": "Manual",
+              "eco": "Humidify",
+              "fitnes": "Fitness",
+              "yoga": "Yoga",
+              "meditation": "Meditation",
+              "prana_hand": "Prana Manual",
+              "prana_auto": "Prana Auto",
+              "aroma": "Aroma"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "intensity": {
+        "name": "Intensity"
+      },
+      "evaporation_rate": {
+        "name": "Evaporation Rate"
+      },
+      "set_temperature": {
+        "name": "Set Temperature"
+      },
+      "amount": {
+        "name": "Coffee Volume"
+      },
+      "weight": {
+        "name": "Brew Strength"
+      },
+      "tank": {
+        "name": "Drink Volume"
+      },
+      "pressure": {
+        "name": "Foam Volume"
+      },
+      "speed": {
+        "name": "Milk Volume"
+      },
+      "temperature": {
+        "name": "Beverage Temperature"
+      },
+      "display_time": {
+        "name": "Display Off Time"
+      },
+      "time_timer": {
+        "name": "Off Timer"
+      },
+      "speed_irrigator": {
+        "name": "Speed"
+      },
+      "temperature_difference_eco": {
+        "name": "ECO Mode Temperature Difference"
+      },
+      "temperature_difference_antifrost": {
+        "name": "Anti-Freeze Mode Temperature Difference"
+      },
+      "bright_backlight": {
+        "name": "Backlight Brightness"
+      },
+      "power_cable": {
+        "name": "Cable Power"
+      },
+      "fan_turn": {
+        "name": "Turn"
+      },
+      "fan_tilt": {
+        "name": "Tilt"
+      },
+      "fan_auto_off": {
+        "name": "Auto Off"
+      }
+    },
+    "sensor": {
+      "temperature_sensor": {
+        "name": "Temperature"
+      },
+      "firmware_version_sensor": {
+        "name": "Firmware Version"
+      },
+      "device_type_sensor": {
+        "name": "Device Type"
+      },
+      "humidity_sensor": {
+        "name": "Humidity"
+      },
+      "time_to_end_sensor": {
+        "name": "Time Remaining"
+      },
+      "time_to_end_turbo_sensor": {
+        "name": "Turbo Time Remaining"
+      },
+      "quality_sensor": {
+        "name": "Cleaning Quality"
+      },
+      "power_consume_sensor": {
+        "name": "Energy Consumption"
+      },
+      "speed_sensor": {
+        "name": "Speed"
+      },
+      "weight_sensor": {
+        "name": "Weight"
+      },
+      "error": {
+        "name": "Error",
+        "state": {
+          "no_error": "None",
+          "low_water": "Low water",
+          "kettle_out_of_base": "Kettle removed from base",
+          "temperature_sensor_failure": "Temperature sensor error",
+          "child_lock": "Child lock activated",
+          "recommended_to_change_water": "Recommended to change water in the kettle",
+          "changed_water_for_long_time": "You may not have changed the water for a long time. It is recommended to boil it",
+          "replace_filter": "Recommended to replace the filter",
+          "maximum_schedules": "Maximum 4 schedules",
+          "clean_tank": "Clean the tank",
+          "cup_not_present": "Cup not installed",
+          "gesture_sensor_error": "Gesture sensor error",
+          "side_door_open": "Side door open",
+          "waste_container_not_installed": "Waste container not installed",
+          "drip_tray_not_installed": "Drip tray not installed",
+          "the_brewing_unit_not_installed": "Brewing unit not installed",
+          "missing_water_tank": "Water tank missing",
+          "waste_container_full": "Waste container full",
+          "not_enough_coffee_beans": "Not enough coffee beans",
+          "water_supply_blocked": "Water supply blocked",
+          "code_e001": "Coffee machine malfunction (code E001) - Contact service center",
+          "code_e002": "Coffee machine malfunction (code E002) - Contact service center",
+          "code_e003": "Coffee machine malfunction (code E003) - Contact service center",
+          "code_e004": "Coffee machine malfunction (code E004) - Contact service center",
+          "code_e005": "Coffee machine malfunction (code E005) - Contact service center",
+          "decalcification_required": "Decalcification required",
+          "water_changed_for_long_time": "Water in the tank has not been changed for a long time, recommended to replace",
+          "cleaning_milk_system": "Milk system cleaning",
+          "cleaning_brewing_system": "Brewing system cleaning",
+          "decalcification_progress": "Decalcification in progress",
+          "cleaning_hydraulic_system": "Hydraulic system cleaning",
+          "check_water_tank": "Check the water tank",
+          "cappuccinator_false": "Cappuccinator not installed",
+          "nothing_is_selected": "No beverage selected",
+          "v01_error_1": "Check the cliff sensor",
+          "v01_error_2": "Check the front bumper",
+          "v01_error_4": "Check the wheels",
+          "v01_error_8": "Check the side brushes",
+          "v01_error_10": "Replace the side brushes",
+          "v01_error_11": "Replace the main brush",
+          "v01_error_12": "Replace the filter",
+          "v01_error_13": "Empty the dust container",
+          "v01_error_16": "Check the fan motor",
+          "v01_error_22": "Place the vacuum on the floor",
+          "v01_error_32": "Check the main brush",
+          "v01_error_64": "Low battery",
+          "v01_error_128": "Child lock activated",
+          "v02_error_2": "Check the main brush",
+          "v02_error_4": "Check the left wheel",
+          "v02_error_5": "Check the right wheel",
+          "v02_error_6": "Check the cliff sensor",
+          "v02_error_7": "Check the side brushes",
+          "v02_error_9": "Check the front bumper",
+          "v02_error_10": "Replace the side brushes",
+          "v02_error_11": "Replace the main brush",
+          "v02_error_12": "Replace the filter",
+          "v02_error_13": "Empty the dust container",
+          "v02_error_21": "Check the fan motor",
+          "v02_error_22": "Place the vacuum on the floor",
+          "v02_error_23": "Child lock activated",
+          "v02_error_30": "Replace the side brushes",
+          "v02_error_31": "Replace the main brush",
+          "v02_error_32": "Replace the filter",
+          "v02_error_33": "Empty the dust container",
+          "v02_error_40": "Map successfully reset. A new map will be created during the next cleaning",
+          "v03_error_2": "Main brush issue. Please refer to the user manual or contact support",
+          "v03_error_3": "Wheel issue. Please refer to the user manual or contact support",
+          "v03_error_4": "Check the wheel to continue movement",
+          "v03_error_6": "Side brush issue. Please refer to the user manual or contact support",
+          "v03_error_7": "Side brush issue. Please refer to the user manual or contact support",
+          "v03_error_8": "Uneven surface, please place the vacuum on a flat surface",
+          "v03_error_9": "Front bumper blocked, please check",
+          "v03_error_10": "Please reinsert the combined container",
+          "v03_error_12": "Cliff sensors dirty, please wipe them clean",
+          "v03_error_13": "Main brush issue. Please refer to the user manual or contact support",
+          "v03_error_14": "Laser sensor blocked, please check",
+          "v03_error_15": "Fan motor issue. Please refer to the user manual or contact support",
+          "v03_error_16": "Laser sensor error. Please refer to the user manual or contact support",
+          "v03_error_18": "Water supply issue. Please refer to the user manual or contact support",
+          "v03_error_19": "I'm stuck. Please clear the area and restart me",
+          "v03_error_20": "Please place the robot vacuum in a new location to start",
+          "v03_error_22": "Laser sensor blocked, please check",
+          "v03_error_24": "I'm in a restricted zone. Please move me",
+          "v03_error_25": "Battery issue. Please refer to the user manual or contact support",
+          "v03_error_26": "Cliff sensor activated, please place me on the floor",
+          "v03_error_27": "Need to recharge. I can continue later",
+          "v03_error_28": "Operation impossible, check the power switch",
+          "v03_error_31": "Scheduled cleaning time, starting now",
+          "v03_error_32": "Charging complete, continuing cleaning",
+          "v03_error_33": "Low battery. Heading to the base",
+          "v03_error_34": "Cannot find the charging base",
+          "v03_error_35": "Please place the robot vacuum on the charging base and ensure battery charge is above 20%",
+          "v03_error_36": "Cleaning complete. Heading to the charging base",
+          "v03_error_37": "Update interrupted. Please try again",
+          "v03_error_38": "Update successfully completed",
+          "v03_error_39": "Don't forget to clean the dust bag in time",
+          "v03_error_40": "Do Not Disturb mode is on, cannot start cleaning",
+          "v03_error_41": "Do Not Disturb mode is on, cannot start scheduled cleaning",
+          "v03_error_42": "Robot vacuum is operating, cannot start scheduled cleaning",
+          "v03_error_44": "Low battery, will shut down",
+          "v03_error_45": "Robot vacuum is operating, cannot start scheduled cleaning",
+          "v03_error_46": "Positioning not completed, cannot start scheduled cleaning",
+          "v03_error_47": "System update in progress, please wait",
+          "v03_error_48": "Need to recharge. I can continue later",
+          "v03_error_53": "Dust collector air duct blocked, clean it",
+          "v04_error_1": "Check the side brush",
+          "v04_error_2": "Check the main brush",
+          "v04_error_3": "Check the left wheel",
+          "v04_error_4": "Check the right wheel",
+          "v04_error_5": "Check the laser sensor",
+          "v04_error_6": "Please place the robot vacuum on the floor to start",
+          "v04_error_8": "Device is stuck",
+          "v04_error_9": "Check the cliff sensor",
+          "v04_error_10": "Laser sensor blocked",
+          "v04_error_11": "Check the front bumper",
+          "v04_error_12": "Check the wheels",
+          "v04_error_13": "Side brush malfunction",
+          "v04_error_14": "Main brush malfunction",
+          "v04_error_15": "Fan malfunction",
+          "v04_error_16": "Radar is dirty",
+          "v04_error_17": "Cannot start cleaning in restricted zone",
+          "v04_error_21": "Battery drained. Going to charge",
+          "v04_error_22": "Battery drained. Try again later",
+          "v04_error_23": "Check the wall following sensor",
+          "v04_error_24": "Mopping pad not installed",
+          "v04_error_25": "2-in-1 water tank not installed",
+          "v04_error_26": "Cliff sensor malfunction",
+          "v04_error_27": "Spiral cleaning unavailable",
+          "v04_error_28": "Cannot find the charging base",
+          "v04_error_29": "Dust bag not installed",
+          "v04_error_30": "Not enough water in the tank",
+          "v04_error_31": "Please check the motor on the mopping pad",
+          "v04_error_32": "Please remove the robot from the carpet",
+          "v04_error_40": "Replace the side brushes",
+          "v04_error_41": "Replace the main brush",
+          "v04_error_42": "Replace the filter",
+          "v04_error_43": "Replace the mopping pad",
+          "v04_error_51": "Dust bag not installed",
+          "v04_error_52": "Dust bag is full",
+          "v04_error_53": "Base station fan is malfunctioning",
+          "v04_error_54": "Dirty water outlet is blocked",
+          "v04_error_55": "Drying heater malfunction",
+          "v04_error_56": "Base station top cover is not closed",
+          "v04_error_57": "Dirty water tank is full, please empty it",
+          "v04_error_58": "Device is not on the charging station",
+          "v04_error_59": "Mopping pad is missing and cannot be cleaned",
+          "v04_error_60": "Base mounting is incorrect",
+          "v04_error_61": "Not enough water in the tank",
+          "v04_error_62": "Dirty water tank is full",
+          "v04_error_63": "Clean water pump malfunction",
+          "v04_error_64": "Dirty water pump malfunction",
+          "v04_error_65": "Drying system pump malfunction",
+          "v04_error_66": "Clean water pump malfunction",
+          "v04_error_67": "Water heating",
+          "v05_error_1": "Robot vacuum wheel issue, please refer to the user manual or contact support",
+          "v05_error_2": "Main brush is blocked. Please check and clean it",
+          "v05_error_4": "Robot vacuum wheel is blocked. Please check the wheel to continue movement",
+          "v05_error_6": "Side brush issue. Please refer to the user manual or contact support",
+          "v05_error_7": "Side brush is blocked, please check to continue movement",
+          "v05_error_8": "Uneven surface, please place the robot vacuum on a flat surface",
+          "v05_error_9": "Front bumper is blocked, please check",
+          "v05_error_10": "Please install the dust container",
+          "v05_error_12": "Cliff sensors are dirty, please wipe them",
+          "v05_error_13": "Main brush issue. Please refer to the user manual or contact support",
+          "v05_error_14": "Laser sensor is blocked, please check",
+          "v05_error_15": "Fan motor issue. Please refer to the user manual or contact support",
+          "v05_error_16": "Laser sensor is blocked, please check",
+          "v05_error_17": "Air duct in the dust container is blocked, please clean it",
+          "v05_error_18": "Water supply issue. Please refer to the user manual or contact support",
+          "v05_error_19": "Robot vacuum is stuck. Please remove obstacles around and restart it",
+          "v05_error_21": "Dust bag is not installed in the dust container. Please install the dust bag to start cleaning",
+          "v05_error_22": "Front laser sensor is dirty, please clean it",
+          "v05_error_23": "Right side sensor is dirty, please wipe it",
+          "v05_error_24": "Robot vacuum is in a restricted zone. Please move the device to start cleaning",
+          "v05_error_25": "Robot vacuum is stuck. Please move it to another location to continue cleaning",
+          "v05_error_26": "Cliff sensor activated, please place the robot vacuum on the floor",
+          "v05_error_41": "Scheduled cleaning time, robot vacuum is starting cleaning",
+          "v05_error_42": "Charging complete, robot vacuum is continuing cleaning",
+          "v05_error_43": "Low battery. Robot vacuum will head to the base to recharge",
+          "v05_error_44": "Robot vacuum cannot find the charging base",
+          "v05_error_45": "Low battery. Battery level must be at least 20% for update",
+          "v05_error_46": "Cleaning complete",
+          "v05_error_47": "Update interrupted. Please try again",
+          "v05_error_48": "Update successfully completed",
+          "v05_error_49": "Dust container is full. Please clean it",
+          "v05_error_50": "Do Not Disturb mode is activated. Cannot continue cleaning",
+          "v05_error_51": "Scheduled cleaning cannot be performed while Do Not Disturb mode is activated",
+          "v05_error_52": "Robot vacuum is currently operating, scheduled cleaning cannot be performed",
+          "v05_error_53": "Mopping on carpets is enabled. Please place the robot vacuum on the floor to start, or remove the mopping pad before cleaning the carpet",
+          "v05_error_54": "Low battery, robot vacuum will shut down soon",
+          "v05_error_55": "Air pressure sensor is malfunctioning, check the dust container",
+          "v05_error_57": "Low battery. Robot vacuum is heading to the base to recharge",
+          "v05_error_69": "Carpet detection sensor error, please refer to the user manual or contact support",
+          "v05_error_70": "Please note that too frequent dust collection leads to wear of the dust container",
+          "v06_error_1": "Right side sensor is blocked, please wipe it",
+          "v06_error_2": "Main brush is blocked. Please check and clean it",
+          "v06_error_3": "Wheel issue. Please refer to the user manual or contact support",
+          "v06_error_4": "Wheel is stuck. Check the wheel, move the robot to a new location and try again",
+          "v06_error_5": "Charging sensor is blocked, please wipe it",
+          "v06_error_6": "Side brush issue. Please refer to the user manual or contact support",
+          "v06_error_7": "Side brush issue. Please refer to the user manual or contact support",
+          "v06_error_8": "Uneven surface, please place me on a flat surface",
+          "v06_error_9": "Front bumper is blocked, please check",
+          "v06_error_10": "Please reinsert the dust container",
+          "v06_error_11": "Camera is dirty, please wipe it",
+          "v06_error_12": "Cliff sensors are dirty, please wipe them",
+          "v06_error_13": "Main brush issue. Please refer to the user manual or contact support",
+          "v06_error_14": "Laser sensor is blocked, please check",
+          "v06_error_15": "Fan motor issue. Please refer to the user manual or contact support",
+          "v06_error_16": "Laser sensor error. Please refer to the user manual or contact support",
+          "v06_error_17": "Camera issue. Please refer to the user manual or contact support",
+          "v06_error_18": "Clean water pump motor error",
+          "v06_error_19": "Robot vacuum is stuck. Please remove obstacles around and restart the robot",
+          "v06_error_20": "Move the robot vacuum to a new location to start cleaning",
+          "v06_error_21": "Laser sensor error. Please refer to the user manual or contact support",
+          "v06_error_22": "Laser sensor is blocked. Please refer to the user manual or contact support",
+          "v06_error_23": "Please wait for the vacuum to leave the base before starting point cleaning",
+          "v06_error_24": "I'm in a restricted zone. Please move the robot vacuum to a new location to start cleaning",
+          "v06_error_25": "Battery issue. Please refer to the user manual or contact support",
+          "v06_error_26": "Cliff sensor activated, please place the robot vacuum on the floor",
+          "v06_error_27": "Need to recharge. Please charge the robot vacuum and continue later",
+          "v06_error_28": "Operation error, check if the main power switch is on",
+          "v06_error_29": "Lidar tower is stuck, please check",
+          "v06_error_30": "Mopping cloth is stuck, please check",
+          "v06_error_31": "Scheduled cleaning started",
+          "v06_error_32": "Charging complete, continuing cleaning",
+          "v06_error_33": "Low battery. Robot vacuum is heading to the base",
+          "v06_error_34": "Charging base not found",
+          "v06_error_35": "Please place the robot vacuum on the charging base and ensure battery charge is above 20%",
+          "v06_error_36": "Cleaning complete. Robot vacuum is heading to the base",
+          "v06_error_37": "Update failed. Please try again",
+          "v06_error_38": "Update successfully completed",
+          "v06_error_39": "Please don't forget to clean the dust bag in time",
+          "v06_error_47": "Please wait, software update in progress",
+          "v06_error_48": "Low battery. Please wait for charging to complete",
+          "v06_error_52": "Please check if the dust bag is correctly installed",
+          "v06_error_53": "Station dust collector air duct is blocked, please clean it",
+          "v06_error_55": "Battery level is too low. Fully charge the robot vacuum, then set high suction power",
+          "v06_error_58": "Child lock is on",
+          "v06_error_59": "Child lock is off",
+          "v06_error_60": "Camera is on",
+          "v06_error_61": "Clean water pump motor issue",
+          "v06_error_62": "Clean water pump motor issue",
+          "v06_error_63": "Dirty water pump motor issue",
+          "v06_error_64": "Dirty water pump motor issue",
+          "v06_error_65": "Stepper motor issue",
+          "v06_error_66": "Stepper motor issue",
+          "v06_error_67": "Dryer motor issue",
+          "v06_error_68": "Dryer motor issue",
+          "v06_error_69": "Station three-way valve error",
+          "v06_error_70": "Station three-way valve error",
+          "v06_error_73": "Upper and lower dirty water pump error",
+          "v06_error_74": "Upper and lower dirty water pump error",
+          "v06_error_75": "Automatic upper and lower water valve error",
+          "v06_error_76": "Automatic upper and lower water valve error",
+          "v06_error_77": "Station is busy",
+          "v06_error_78": "Water tank drainage malfunction",
+          "v06_error_79": "Automatic water tank refill malfunction",
+          "v06_error_80": "Air pressure sensor malfunction",
+          "v06_error_81": "Station dust collector air duct is blocked",
+          "v06_error_82": "Resuming operation after overflow",
+          "v06_error_83": "Station temperature sensor error",
+          "v06_error_84": "Temperature sensor detected high temperature in the station",
+          "v06_error_86": "Host is missing",
+          "v06_error_87": "Caution, water overflow at the station",
+          "v06_error_88": "Stepper motor installed incorrectly",
+          "v06_error_89": "Dust bag not installed",
+          "v06_error_90": "Dust bag is full",
+          "v06_error_91": "Dust container door is open",
+          "v06_error_92": "Frequent dust collection",
+          "v06_error_93": "Clean water tank is empty",
+          "v06_error_94": "Clean water tank not installed",
+          "v06_error_95": "Dirty water tank is full",
+          "v06_error_96": "Dirty water tank not installed",
+          "v06_error_97": "Clean water tank not installed",
+          "v06_error_101": "Clean water tank is empty",
+          "v06_error_102": "Clean water tank not installed",
+          "v06_error_103": "Dirty water tank is full",
+          "v06_error_104": "Dirty water tank not installed",
+          "v06_error_105": "Dust bag is full",
+          "v06_error_106": "Dust bag not installed",
+          "v06_error_121": "Cleaning paused, please check the mopping cloth holder",
+          "v06_error_122": "Could not reach the designated location",
+          "v06_error_131": "Camera is off",
+          "v07_error_1": "Cliff sensor activated, place the robot vacuum on the floor",
+          "v07_error_2": "Fan motor issue",
+          "v07_error_3": "Positioning error",
+          "v07_error_4": "Positioning error, cleaning paused",
+          "v07_error_5": "Virtual wall or restricted zone detected",
+          "v07_error_6": "Error returning to charging station",
+          "v07_error_7": "Dust container not installed",
+          "v07_error_8": "Mopping pad not installed",
+          "v07_error_9": "Clean water tank is empty",
+          "v07_error_10": "Mopping pad not installed",
+          "v07_error_11": "Clean water tank not installed",
+          "v07_error_12": "Dirty water tank is full",
+          "v07_error_13": "Dirty water tank not installed",
+          "v07_error_14": "Dust container not installed",
+          "v07_error_15": "High battery temperature",
+          "v07_error_16": "Main brush is blocked, please check",
+          "v07_error_17": "Main brush malfunction",
+          "v07_error_18": "Side brush is blocked",
+          "v07_error_19": "Side brush malfunction",
+          "v07_error_20": "Right wheel is blocked. Please check and clean it",
+          "v07_error_21": "Left wheel is blocked. Please check and clean it",
+          "v07_error_22": "Cliff sensors are dirty, please wipe and move the robot to a new location",
+          "v07_error_23": "Front bumper is blocked, please check",
+          "v07_error_24": "Laser sensor is blocked, please check",
+          "v07_error_25": "Side laser sensor is dirty, please wipe it",
+          "v07_error_26": "Mopping pad drive overload",
+          "v07_error_27": "Dust container is full",
+          "v07_error_28": "Hair cutting device overload",
+          "v07_error_29": "Low battery, needs charging",
+          "v07_error_30": "Map building error",
+          "v07_error_31": "Target area is inaccessible",
+          "v07_error_32": "Obstacle detected on the path, please check",
+          "v07_error_33": "Error identifying the selected zone",
+          "v07_error_34": "Please wait until charging is complete",
+          "v07_error_35": "Robot vacuum self-check",
+          "v08_error_1": "Wheels are off the ground. Make sure the robot vacuum is on a flat surface",
+          "v08_error_2": "Error starting operation on a slope",
+          "v08_error_3": "Navigation failure",
+          "v08_error_4": "Robot vacuum cannot determine its location for cleaning",
+          "v08_error_5": "Virtual wall or restricted zone detected",
+          "v08_error_6": "Error returning to charging station",
+          "v08_error_7": "Dust container not installed",
+          "v08_error_8": "Mopping pads not installed",
+          "v08_error_9": "Clean water tank is empty or not installed",
+          "v08_error_10": "Charging station cleaning bracket not installed. Please install it",
+          "v08_error_11": "Clean water tank not installed",
+          "v08_error_12": "Dirty water tank is full or not installed",
+          "v08_error_13": "Dirty water tank not installed",
+          "v08_error_14": "Dust bag not installed",
+          "v08_error_15": "High battery temperature",
+          "v08_error_16": "Main brush is blocked. Please check and clean the brush",
+          "v08_error_17": "Main brush malfunction",
+          "v08_error_18": "Side brush is blocked",
+          "v08_error_19": "Side brush malfunction",
+          "v08_error_20": "Right wheel is blocked. Please check and clean it",
+          "v08_error_21": "Robot vacuum wheel malfunction",
+          "v08_error_22": "Cliff sensors are dirty, please wipe and move the robot to a new location",
+          "v08_error_23": "Robot is stuck due to collision",
+          "v08_error_24": "Laser sensor is blocked, please check",
+          "v08_error_25": "Side laser sensor is dirty, please wipe it",
+          "v08_error_26": "Mopping pad drive overload",
+          "v08_error_27": "Dust container is full",
+          "v08_error_28": "Hair cutting device overload",
+          "v08_error_29": "Low battery, returning to charging station",
+          "v08_error_30": "Could not build the map",
+          "v08_error_31": "Cannot reach the target area",
+          "v08_error_32": "Robot is stuck",
+          "v08_error_33": "Could not determine location for cleaning the specified zone",
+          "v08_error_34": "Wait for charging to complete",
+          "v08_error_35": "Hair cleaning module error",
+          "v08_error_36": "Robot vacuum is in a carpet avoidance zone. Please move it to another location",
+          "v08_error_37": "Could not determine location. Please move the robot to the charging station and rebuild the map",
+          "v08_error_38": "Dust collection is happening too often. Please try again later",
+          "v08_error_39": "Dust bag is full",
+          "v08_error_40": "New environment detected. Starting cleaning anew",
+          "v08_error_50": "Dust bag is full. It is recommended to replace it",
+          "v09_error_1": "Front bumper is blocked, please check",
+          "v09_error_4": "Cliff sensors are dirty, please wipe them",
+          "v09_error_5": "Cliff sensor activated, place the robot vacuum on the floor",
+          "v09_error_9": "Side brush is blocked",
+          "v09_error_10": "Left wheel is blocked. Please check and clean it",
+          "v09_error_11": "Right wheel is blocked. Please check and clean it",
+          "v09_error_12": "Main brush is blocked. Please check and clean it",
+          "v09_error_13": "Fan motor issue. Please refer to the user manual or contact support",
+          "v09_error_16": "Dust container not installed",
+          "v09_error_20": "Gyro module error",
+          "v09_error_21": "Lidar module error",
+          "v09_error_23": "Robot is stuck, please check its location",
+          "v09_error_30": "Replace the side brushes",
+          "v09_error_31": "Replace the main brush",
+          "v09_error_32": "Replace the filter",
+          "v09_error_33": "Replace the mopping pad",
+          "v09_error_100": "You can save a maximum of 5 maps on your robot vacuum. Please delete old maps to add new ones",
+          "v09_error_200": "Child lock activated",
+          "v10_error_1": "Cliff sensor activated, place the robot vacuum on the floor",
+          "v10_error_2": "Low battery, needs charging",
+          "v10_error_3": "Dust container not installed",
+          "v10_error_4": "System error: Hardware issue (error code 504). Please restart the robot. If the problem persists, contact support",
+          "v10_error_5": "Uneven surface, please place the robot on a flat surface",
+          "v10_error_6": "Cliff sensor error",
+          "v10_error_7": "Front bumper is blocked, please check",
+          "v10_error_8": "Error returning to base",
+          "v10_error_9": "An error occurred while trying to return to the charging station",
+          "v10_error_10": "Navigation error. Robot cannot determine its position",
+          "v10_error_11": "Could not avoid obstacle",
+          "v10_error_12": "System update",
+          "v10_error_13": "Low battery, needs charging",
+          "v10_error_14": "Water tank not installed",
+          "v10_error_15": "Mopping pad not installed",
+          "v10_error_16": "Robot vacuum wheel issue",
+          "v10_error_17": "Battery temperature is too low. Wait for it to normalize, then continue use",
+          "v10_error_18": "Battery temperature is too high. Wait for it to normalize, then continue use",
+          "v10_error_19": "Side brush issue. Please refer to the user manual or contact support",
+          "v10_error_20": "Main brush issue",
+          "v10_error_21": "Robot vacuum has not been used for a long time, it will automatically shut down soon",
+          "v10_error_22": "Low battery, shutting down",
+          "v10_error_23": "Robot vacuum wheel error",
+          "v10_error_24": "Left wheel is blocked. Please check and clean it",
+          "v10_error_25": "Right wheel is blocked. Please check and clean it",
+          "v10_error_50": "Returning to dock station",
+          "v10_error_51": "Returning to dock station to recharge",
+          "v10_error_52": "Cleaning complete, returning to dock station",
+          "v10_error_53": "Charging",
+          "v10_error_54": "An error occurred while trying to send the robot home",
+          "v10_error_55": "Charging complete",
+          "v10_error_56": "Charging issue detected",
+          "v11_error_2": "Wheels are not touching the floor. Please move the robot vacuum to a flat floor",
+          "v11_error_3": "Remove foreign objects from the brushes underneath",
+          "v11_error_4": "Remove foreign objects from the side brush",
+          "v11_error_5": "Double mop is stuck",
+          "v11_error_7": "Front bumper is stuck",
+          "v11_error_8": "Laser sensor is blocked",
+          "v11_error_9": "Lidar is stuck",
+          "v11_error_10": "Lidar tower bumper is stuck",
+          "v11_error_11": "Edge detected",
+          "v11_error_12": "Robot is tilted",
+          "v11_error_13": "Robot is in a restricted zone",
+          "v11_error_14": "Cannot reach the cleaning zone",
+          "v11_error_15": "Robot is stuck",
+          "v11_error_18": "Right wall sensor is blocked, please wipe it",
+          "v11_error_19": "Dust container is missing",
+          "v11_error_20": "Dust bag not installed",
+          "v11_error_21": "Battery is open, short circuit or high battery temperature detected",
+          "v11_error_40": "Wheel motor issue detected. Refer to the manual or app",
+          "v11_error_41": "Brush motor issue detected. Refer to the manual or app",
+          "v11_error_42": "Side brush motor issue detected. Refer to the manual or app",
+          "v11_error_43": "Double mop motor issue detected. Refer to the manual or app",
+          "v11_error_45": "Suction motor error",
+          "v11_error_47": "Insufficient battery charge, automatic shutdown",
+          "v11_error_52": "Device battery charge is too low",
+          "v11_error_55": "Lidar sensor issue detected. Refer to the manual or app",
+          "v11_error_59": "Carpet detection sensor error. Refer to the manual or app",
+          "v11_error_61": "Could not find the home station. Home station search completed. Please move the robot vacuum to the home station to charge",
+          "v11_error_62": "Low battery. Please move the robot to the dock station to charge",
+          "v11_error_63": "Station dust bag is full. Please replace the bag",
+          "v11_error_64": "Mop start error on carpet",
+          "v11_error_65": "Collect dust frequently",
+          "v11_error_81": "Scheduled cleaning started",
+          "v11_error_82": "Continue cleaning after charging",
+          "v11_error_83": "Software update failed. Please try again",
+          "v11_error_84": "Low battery. Searching for home station",
+          "v11_error_85": "Low battery",
+          "v11_error_88": "Movement failed, destination not reached",
+          "v11_error_91": "Positioning failure, recharge the device",
+          "v11_error_94": "Please install the mop holder",
+          "pressure_sensor": "Pressure sensor error. Refer to the manual or app"
+        }
+      },
+      "filter_retain_sensor": {
+        "name": "Filter Remaining"
+      },
+      "pre_filter_retain_sensor": {
+        "name": "Pre-filter Remaining"
+      },
+      "clean_retain_sensor": {
+        "name": "Tank Cleaning Remaining"
+      },
+      "anode_retain_sensor": {
+        "name": "Anode Replacement Remaining"
+      },
+      "mode_sensor": {
+        "name": "Operating Mode",
+        "state": {
+          "off": "Off",
+          "espresso": "Espresso",
+          "ristretto": "Ristretto",
+          "long_espresso": "Lungo",
+          "americano": "Americano",
+          "heating": "Heating",
+          "cappuccino": "Cappuccino",
+          "latte": "Latte",
+          "flat_white": "Flat White",
+          "cortado": "Cortado",
+          "double_espresso": "Double Espresso",
+          "double_cappuccino": "Double Cappuccino",
+          "double_latte": "Double Latte",
+          "double_long_espresso": "Double Lungo",
+          "double_macchiato": "Double Macchiato",
+          "milk_coffee": "Coffee with Milk",
+          "macchiato": "Macchiato",
+          "latte_macchiato": "Latte Macchiato",
+          "hot_water": "Hot Water",
+          "hot_milk foam": "Milk Foam",
+          "hot_milk": "Hot Milk"
+        }
+      },
+      "power_state": {
+        "name": "Power",
+        "state": {
+          "power_on": "On",
+          "power_off": "Off",
+          "turns_on": "Turning On",
+          "turns_off": "Turning Off"
+        }
+      },
+      "current_power_sensor": {
+        "name": "Current Power"
+      },
+      "outdoor_unit_temperature_sensor": {
+        "name": "Outdoor Unit Temperature"
+      },
+      "pm2_5_sensor": {
+        "name": "PM2.5"
+      },
+      "co2_sensor": {
+        "name": "CO2"
+      },
+      "vacuum_battery": {
+        "name": "Battery"
+      },
+      "vacuum_battery_state": {
+        "name": "Battery Status",
+        "state": {
+          "charge-full": "Full",
+          "discharge": "Discharging",
+          "charging": "Charging",
+          "charge-dock": "Charging",
+          "charge-cable": "Charging"
+        }
+      },
+      "vacuum_side_brush": {
+        "name": "Side Brush"
+      },
+      "vacuum_main_brush": {
+        "name": "Main Brush"
+      },
+      "vacuum_filter": {
+        "name": "Filter"
+      },
+      "vacuum_mop": {
+        "name": "Mopping Pad"
+      },
+      "vacuum_dust_container": {
+        "name": "Dust Container"
+      },
+      "last_clean_time": {
+        "name": "Cleaning Time"
+      },
+      "last_clean_area": {
+        "name": "Cleaning Area"
+      },
+      "total_clean_time": {
+        "name": "Total Cleaning Time"
+      },
+      "total_clean_area": {
+        "name": "Total Cleaning Area"
+      },
+      "clean_count": {
+        "name": "Cleaning Count"
+      },
+      "current_id_room": {
+        "name": "Room ID"
+      },
+      "go_area": {
+        "name": "Cleaning Area"
+      }
+    },
+    "select": {
+      "select_tea_kettle": {
+        "name": "Presets",
+        "state": {
+          "not_selected": "Not Selected",
+          "black_tea": "Black Tea",
+          "baby_bottle": "Baby Formula",
+          "instant_coffee": "Instant Coffee",
+          "green_tea": "Green Tea",
+          "flower_tea": "Flower Tea",
+          "tea_bag": "Tea Bag",
+          "red_tea": "Red Tea",
+          "puerh_tea": "Puerh",
+          "oolong_tea": "Oolong",
+          "white_tea": "White Tea",
+          "herbal_tea": "Herbal Tea"
+        }
+      },
+      "select_mode_cooker": {
+        "name": "Recipes",
+        "state": {
+          "my_recipe_plus": "My Recipe +",
+          "reheat": "Reheat",
+          "cake": "Baking",
+          "soaked_rice": "Grains",
+          "stew": "Stew",
+          "fry": "Fry",
+          "pilaf": "Pilaf",
+          "yogurt": "Yogurt",
+          "oatmeal": "Oatmeal",
+          "milk_porridge": "Milk Porridge",
+          "soup": "Soup",
+          "meat": "Aspic",
+          "cottage_cheese": "Cottage Cheese",
+          "french_fries": "French Fries",
+          "chicken": "Chicken",
+          "steak": "Steak",
+          "vegetables": "Vegetables",
+          "pie": "Pie",
+          "fish": "Fish",
+          "dehydrate": "Dried Fruit",
+          "nuggets": "Nuggets"
+        }
+      },
+      "select_mode_cofeemaker": {
+        "name": "Beverage",
+        "state": {
+          "not_selected": "Not Selected",
+          "espresso": "Espresso",
+          "ristretto": "Ristretto",
+          "long_espresso": "Lungo",
+          "americano": "Americano",
+          "cappuccino": "Cappuccino",
+          "latte": "Latte",
+          "flat_white": "Flat White",
+          "cortado": "Cortado",
+          "double_espresso": "Double Espresso",
+          "double_cappuccino": "Double Cappuccino",
+          "double_latte": "Double Latte",
+          "double_long_espresso": "Double Lungo",
+          "double_macchiato": "Double Macchiato",
+          "milk_coffee": "Coffee with Milk",
+          "macchiato": "Macchiato",
+          "latte_macchiato": "Latte Macchiato",
+          "hot_water": "Hot Water",
+          "hot_milk_foam": "Milk Foam",
+          "hot_milk": "Hot Milk",
+          "doppio": "Doppio",
+          "lungo": "Lungo",
+          "clearing": "Cleaning",
+          "heating": "Heating"
+        }
+      },
+      "select_melody": {
+        "name": "Melody",
+        "state": {
+          "mute": "Mute",
+          "rainstorm": "Rainstorm",
+          "surf": "Surf",
+          "forest": "Forest",
+          "birdsong": "Birdsong",
+          "bonfire": "Bonfire"
+        }
+      },
+      "select_irrigator": {
+        "name": "Personal Modes",
+        "state": {
+          "preset1": "Mode 1",
+          "preset2": "Mode 2",
+          "preset3": "Mode 3"
+        }
+      },
+      "select_night_mode": {
+        "name": "Night Mode",
+        "state": {
+          "off": "Off",
+          "standard": "Standard",
+          "child": "Child",
+          "teen": "Teen",
+          "the_aged": "Elderly"
+        }
+      },
+      "select_night_backlight": {
+        "name": "Night Backlight",
+        "state": {
+          "off": "Off",
+          "all_on": "All Lights On",
+          "high_on": "Top Light On",
+          "mid_on": "Middle Light On",
+          "low_on": "Bottom Light On"
+        }
+      },
+      "select_swing_horizontal": {
+        "name": "Vertical Swing",
+        "state": {
+          "off": "Swing",
+          "top": "Top",
+          "high": "Above Middle",
+          "middle": "Middle",
+          "low": "Below Middle",
+          "bottom": "Bottom"
+        }
+      },
+      "select_swing_vertical": {
+        "name": "Horizontal Swing",
+        "state": {
+          "off": "Swing",
+          "left": "Left",
+          "center-left": "Center Left",
+          "center": "Center",
+          "center-right": "Center Right",
+          "right": "Right"
+        }
+      },
+      "select_mode_vacuum": {
+        "name": "Operating Mode",
+        "state": {
+          "off": "Off",
+          "random": "Random Route",
+          "auto": "Auto",
+          "wall": "Along Wall",
+          "spiral": "Spiral",
+          "recharge": "Return to Base",
+          "spot": "Spot",
+          "wet_cleaning": "Wet Cleaning",
+          "edge": "Edge",
+          "classic": "Classic",
+          "intensive_cleaning_area": "Intensive Cleaning Zone",
+          "create_map": "Create Map",
+          "mapmaking_and_cleaning": "Mapping & Cleaning",
+          "scheduled_room_cleaning": "Scheduled Room Cleaning",
+          "area_cleaning": "Zone Cleaning",
+          "y_shaped_wet_cleaning": "Y-shaped Wet Cleaning",
+          "double_cleaning": "Double Cleaning",
+          "cleaning_the_rag": "Cloth Cleaning",
+          "mop_cleaning": "Mop Cleaning",
+          "mop_drying": "Mop Drying",
+          "self_cleaning": "Self Cleaning",
+          "quick_cleaning": "Quick Cleaning",
+          "thorough_cleaning": "Thorough Cleaning",
+          "sweep": "Dry Cleaning",
+          "sweep_mop": "Dry + Wet Cleaning",
+          "mop": "Wet Cleaning",
+          "cut_hair": "Hair Cleaning"
+        }
+      },
+      "select_room": {
+        "name": "Room Selection",
+        "state": {
+          "all_rooms": "All Rooms"
+        }
+      },
+      "vacuum_tank": {
+        "name": "Water Flow Intensity",
+        "state": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High",
+          "max": "Maximum"
+        }
+      },
+      "select_fan_light": {
+        "name": "Light",
+        "state": {
+          "off": "Off",
+          "half": "Medium",
+          "full": "Maximum"
+        }
+      },
+      "select_mode_windowcleaner": {
+        "name": "Mode",
+        "state": {
+          "off": "Stop",
+          "up": "Up, then Down",
+          "left": "Left, then Down",
+          "right": "Right, then Down"
+        }
+      }
+    },
+    "vacuum": {
+      "vacuum": {
+        "name": "Robot Vacuum",
+        "state_attributes": {
+          "fan_speed": {
+            "state": {
+              "min": "Minimum",
+              "low": "Low",
+              "medium": "Medium",
+              "high": "High",
+              "max": "Maximum"
+            }
+          }
+        }
+      }
+    },
+    "light": {
+      "night_light": {
+        "name": "Night Light"
+      },
+      "night_light_up": {
+        "name": "Top Light"
+      },
+      "night_light_down": {
+        "name": "Bottom Light"
+      }
+    },
+    "binary_sensor": {
+      "base_binary_sensor": {
+        "name": "Position",
+        "state": {
+          "on": "Off Base",
+          "off": "On Base"
+        }
+      },
+      "lid_binary_sensor": {
+        "name": "Lid",
+        "state": {
+          "on": "Open",
+          "off": "Closed"
+        }
+      },
+      "water_tank_binary_sensor": {
+        "name": "Tank Removed",
+        "state": {
+          "on": "Yes",
+          "off": "No"
+        }
+      },
+      "cappuccinator_binary_sensor": {
+        "name": "Cappuccinator",
+        "state": {
+          "on": "Installed",
+          "off": "Not Installed"
+        }
+      },
+      "heating_binary_sensor": {
+        "name": "Heating",
+        "state": {
+          "on": "Heating",
+          "off": "Not Heating"
+        }
+      },
+      "available_binary_sensor": {
+        "name": "Local Network",
+        "state": {
+          "on": "Online",
+          "off": "Offline"
+        }
+      }
+    },
+    "time": {
+      "delay_start": {
+        "name": "Delayed Start"
+      },
+      "cooking_time": {
+        "name": "Cooking Time"
+      }
+    },
+    "button": {
+      "button_stop": {
+        "name": "Stop"
+      },
+      "button_start": {
+        "name": "Start"
+      },
+      "button_stop_coffee": {
+        "name": "Stop"
+      },
+      "button_start_coffee": {
+        "name": "Brew"
+      },
+      "button_reset_filter": {
+        "name": "Reset Filter Timer"
+      },
+      "button_reset_prefilter": {
+        "name": "Reset Pre-filter Timer"
+      },
+      "button_reset_tank": {
+        "name": "Reset Tank Cleaning Timer"
+      }
+    },
+    "climate": {
+      "climate": {
+        "name": "Climate",
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "1_speed": "Speed 1",
+              "2_speed": "Speed 2",
+              "3_speed": "Speed 3",
+              "4_speed": "Speed 4",
+              "5_speed": "Speed 5",
+              "6_speed": "Speed 6",
+              "7_speed": "Speed 7",
+              "8_speed": "Speed 8",
+              "9_speed": "Speed 9"
+            }
+          },
+          "preset_mode": {
+            "state": {
+              "hands": "Manual",
+              "auto": "Automatic",
+              "night": "Night",
+              "turbo": "Turbo",
+              "passive": "Passive"
+            }
+          }
+        }
+      },
+      "heater": {
+        "name": "Heater",
+        "state_attributes": {
+          "fan_mode": {
+            "name": "Heating Power",
+            "state": {
+              "10_percent": "10 %",
+              "20_percent": "20 %",
+              "30_percent": "30 %",
+              "40_percent": "40 %",
+              "50_percent": "50 %",
+              "60_percent": "60 %",
+              "70_percent": "70 %",
+              "80_percent": "80 %",
+              "90_percent": "90 %",
+              "100_percent": "100 %",
+              "20_5_percent": "20 %",
+              "40_5_percent": "40 %",
+              "60_5_percent": "60 %",
+              "80_5_percent": "80 %",
+              "100_5_percent": "100 %"
+            }
+          },
+          "preset_mode": {
+            "state": {
+              "hands": "Manual"
+            }
+          }
+        }
+      },
+      "aircleaner": {
+        "name": "Air Purifier",
+        "state": {
+          "dry": "Cleaning"
+        },
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "hands": "Manual",
+              "auto": "Automatic",
+              "night": "Night"
+            }
+          },
+          "fan_mode": {
+            "state": {
+              "top": "Turbo"
+            }
+          }
+        }
+      },
+      "conditioner": {
+        "name": "Air Conditioner",
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "quite": "Quiet",
+              "min": "Min",
+              "max": "Max",
+              "turbo": "Turbo"
+            }
+          }
+        }
+      },
+      "thermostat": {
+        "name": "Thermostat",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "eco": "Eco",
+              "comfort": "Comfort",
+              "turbo": "Turbo",
+              "antifrost": "Anti-Freeze",
+              "schedule": "Schedule",
+              "vacation": "Vacation",
+              "manual": "Manual"
+            }
+          }
+        }
+      }
+    },
+    "fan": {
+      "fan": {
+        "name": "Fan",
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "off": "Off",
+              "standart": "Standard",
+              "breeze": "Natural Breeze",
+              "night": "Night",
+              "eco": "Eco",
+              "auto": "Auto"
+            }
+          }
+        }
+      }
+    }
+  },
+  "common": {
+    "all": "Select device type",
+    "kettle": "Kettle",
+    "humidifier": "Humidifier",
+    "cooker": "Multicooker",
+    "coffeemaker": "Coffee Machine",
+    "air_cleaner": "Air Purifier",
+    "irrigator": "Irrigator",
+    "air_fryer": "Air Fryer",
+    "boiler": "Boiler",
+    "heater": "Heater",
+    "cleaner": "Robot Vacuum",
+    "window_cleaner": "Window Cleaner",
+    "blender": "Blender",
+    "cooktop": "Cooktop",
+    "cordless_cleaner": "Cordless Vacuum",
+    "fan": "Fan",
+    "grill": "Grill",
+    "hair_care": "Hair Dryer",
+    "hood": "Hood",
+    "iron": "Iron",
+    "kitchen_machine": "Kitchen Machine",
+    "meat_grinder": "Meat Grinder",
+    "other": "Smart Device",
+    "oven": "Oven",
+    "steamer": "Steamer",
+    "toothbrush": "Toothbrush",
+    "air_conditioner": "Air Conditioner",
+    "thermostat": "Thermostat"
   }
 }

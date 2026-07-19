@@ -262,6 +262,12 @@
       "power_consume_sensor": {
         "name": "Потребление энергии"
       },
+      "speed_sensor": {
+        "name": "Скорость"
+      },
+      "weight_sensor": {
+        "name": "Вес"
+      },
       "error": {
         "name": "Ошибка",
         "state": {
@@ -772,6 +778,9 @@
       },
       "pm2_5_sensor": {
         "name": "PM2.5"
+      },
+      "co2_sensor": {
+        "name": "CO2"
       },
       "vacuum_battery": {
         "name": "Батарея"  
