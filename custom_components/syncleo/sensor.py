@@ -54,6 +54,7 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
         
         self._state_key = getattr(desc, 'coordinator_state', None)
         self._expendables_index = getattr(desc, 'expendables_index', "0")
+        self._program_index = getattr(desc, 'program_index', "0")
         self._func = getattr(desc, 'func', None)
         self._attr_has_entity_name = True
         
@@ -88,6 +89,12 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
                 return None
             value_data = self.coordinator.data.get("CMD_EXPENDABLES", {})
             value = value_data.get(self._expendables_index)
+        elif self._state_key == "CMD_PROGRAM_DATA":
+            if not self.coordinator.data:
+                return None
+            value_data = self.coordinator.data.get("CMD_EXPENDABLES", {})
+            value = value_data.get(self._program_index)
+            # Возможно нужен парсер и умножение на 10 или 20
         else:
             value = self._get_state_from_coordinator(self._state_key, self._func)
         return value

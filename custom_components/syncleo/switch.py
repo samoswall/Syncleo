@@ -57,6 +57,8 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
         self._state_key = getattr(desc, 'coordinator_state', None)
         self._func = getattr(desc, 'func', None)
         self._command = get_command_from_state_key(self._state_key)
+        self._program_index = getattr(desc, 'program_index', "0")
+        self._byte_index = getattr(desc, 'byte_index', None)
         self._attr_has_entity_name = True
         self._attr_unique_id = slugify(f"{device.mac}_{key}")
         
@@ -74,7 +76,16 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
         if not self.available or not self._state_key:
             return False
         
-        value = self._get_state_from_coordinator(self._state_key, self._func)
+        if self._state_key == "CMD_PROGRAM_DATA":
+            if not self.coordinator.data:
+                return None
+            value_data = self.coordinator.data.get("CMD_PROGRAM_DATA", {})
+            value = value_data.get(self._program_index)
+            if self._bite_index is not None:
+                hex_arr = hexbytes.fromhex(value)
+                value = hex_arr[int(self._bite_index)]
+        else:
+            value = self._get_state_from_coordinator(self._state_key, self._func)
         return bool(value) if value is not None else False
 
     def _handle_coordinator_update(self) -> None:
@@ -103,8 +114,22 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
             _LOGGER.error("Неизвестная команда для переключателя %s (state_key=%s)", 
                          self.entity_key, self._state_key)
             return
-            
-        await self.async_send_command(self._command, b'\x01' if state else b'\x00')
+        
+        if self._state_key == "CMD_PROGRAM_DATA":
+            if not self.coordinator.data:
+                return None
+            index = int(self._program_index)
+            if self._bite_index is not None:
+                value_data = self.coordinator.data.get("CMD_PROGRAM_DATA", {})
+                value = value_data.get(self._program_index)
+                hex_arr = hexbytes.fromhex(value)
+                hex_arr[int(self._byte_index)] = bytes([1]) if state else bytes([0])
+                payload = bytes([index]) + hex_arr
+            else:
+                payload = bytes([index, 1]) if state else bytes([index, 0])
+            await self.async_send_command(self._command, payload)
+        else:
+            await self.async_send_command(self._command, b'\x01' if state else b'\x00')
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self._async_set_state(True)

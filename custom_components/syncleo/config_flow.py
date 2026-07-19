@@ -70,7 +70,7 @@ class SyncleoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 # СОХРАНЯЕМ ДАННЫЕ ZEROCONF ВО ВРЕМЕННОЕ ХРАНИЛИЩЕ
                 self.hass.data.setdefault(DOMAIN, {})["pending_zeroconf"] = self._discovery_info
                 return self.async_create_entry(
-                    title=f"Syncleo {self._mac}",                                                               # Добавтить тип и модель
+                    title=f"Syncleo {self._mac}",
                     data={
                         "mac": self._mac,
                         "token": token,
@@ -84,7 +84,12 @@ class SyncleoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         vendor = self._discovery_info.properties.get('vendor', 'Unknown')
         devtype = self._discovery_info.properties.get('devtype', '0')
         _LOGGER.debug("Discovered device: %s", self._discovery_info)
-        device_info = POLARIS_DEVICE[int(devtype)]
+        if vendor == 'Polaris':
+            device_info = POLARIS_DEVICE[int(devtype)]
+        elif vendor == 'Rusclimate':
+            device_info = HOMMYN_DEVICE[int(devtype)]
+        else:
+            device_info = HOMMYN_DEVICE[0]
         placeholders = {"name": f"{vendor} {device_info['model']}"}
 #        placeholders = {
 #            "device": POLARIS_DEVICE[int(self._device_type)]['model'],

@@ -4,6 +4,7 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.humidifier import HumidifierEntity, HumidifierEntityDescription, HumidifierDeviceClass
 from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACAction, HVACMode
+from homeassistant.components.number import NumberDeviceClass, NumberEntityDescription
 from homeassistant.const import (
     EntityCategory,
     PERCENTAGE,
@@ -109,7 +110,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-        icon="mdi:kettle"
+#        icon="mdi:kettle"
     ),
     "kettle_with_tea_time": SyncleoWaterHeaterDescription(
         key="kettle_with_tea_time",
@@ -121,7 +122,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-        icon="mdi:kettle"
+#        icon="mdi:kettle"
     ),
     "kettle_with_tea_time_keep_with_warm": SyncleoWaterHeaterDescription(
         key="kettle_with_tea_time_keep_with_warm",
@@ -133,9 +134,44 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-        icon="mdi:kettle"
+#        icon="mdi:kettle"
     ),
-
+    "water_boiler": SyncleoWaterHeaterDescription(
+        key="water_boiler",
+        translation_key="water_boiler",
+        name="boiler",
+        min_temp=30,
+        max_temp=75,
+        operation_list={"off": "0", "performance": "1", "electric": "2", "heat_pump": "3"},
+        coordinator_mode="CMD_MODE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+#        icon="mdi:kettle"
+    ),
+    "water_boiler_antifrost": SyncleoWaterHeaterDescription(
+        key="water_boiler_antifrost",
+        translation_key="water_boiler",
+        name="boiler",
+        min_temp=30,
+        max_temp=75,
+        operation_list={"off": "0", "performance": "1", "electric": "2", "heat_pump": "3", "gas": "5"},
+        coordinator_mode="CMD_MODE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+#        icon="mdi:kettle"
+    ),
+    "water_boiler_eco": SyncleoWaterHeaterDescription(
+        key="water_boiler_eco",
+        translation_key="water_boiler",
+        name="boiler",
+        min_temp=30,
+        max_temp=75,
+        operation_list={"off": "0", "performance": "1", "electric": "2", "heat_pump": "3", "eco": "6"},
+        coordinator_mode="CMD_MODE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+#        icon="mdi:kettle"
+    ),
 }
 
 
@@ -323,7 +359,8 @@ FAN_DESCRIPTIONS = {
 class SyncleoSwitchDescription(SyncleoEntityDescription):
     """Описание для переключателя."""
     entity_category: Optional[EntityCategory] = EntityCategory.CONFIG
-
+    program_index: str = "0"
+    byte_index: str = None
 
 SWITCH_DESCRIPTIONS = {
     "power": SyncleoSwitchDescription(
@@ -358,6 +395,23 @@ SWITCH_DESCRIPTIONS = {
         icon="mdi:lightbulb",
         entity_category=EntityCategory.CONFIG
     ),
+    "backlight_bright": SyncleoSwitchDescription(
+        translation_key="backlight_bright_switch",
+        key="backlight_bright",
+        coordinator_state="CMD_BACKLIGHT",
+        func=parse_hex_to_bool,
+        icon="mdi:lightbulb",
+        entity_category=EntityCategory.CONFIG
+    ),
+    "backlight_bright_pd": SyncleoSwitchDescription(
+        translation_key="backlight_bright_switch",
+        key="backlight_bright_pd",
+        coordinator_state="CMD_PROGRAM_DATA",
+        program_index="0",
+        func=parse_hex_to_bool,
+        icon="mdi:lightbulb",
+        entity_category=EntityCategory.CONFIG
+    ),
     "ionization": SyncleoSwitchDescription(
         translation_key="ionization_switch",
         key="ionization",
@@ -375,15 +429,23 @@ SWITCH_DESCRIPTIONS = {
         entity_category=EntityCategory.CONFIG
     ),
     "warmstream": SyncleoSwitchDescription(
-        translation_key="warmstream_switch",
+        translation_key="warm_stream_switch",
         key="warmstream",
         coordinator_state="CMD_WARMSTREAM",
         func=parse_hex_to_bool,
         icon="mdi:heat-wave",
         entity_category=EntityCategory.CONFIG
     ),
+    "ultraviolet": SyncleoSwitchDescription(
+        translation_key="ultraviolet_switch",
+        key="ultraviolet",
+        coordinator_state="CMD_ULTRAVIOLET",
+        func=parse_hex_to_bool,
+        icon="mdi:white-balance-sunny",
+        entity_category=EntityCategory.CONFIG
+    ),
     "night": SyncleoSwitchDescription(
-        translation_key="night_mode_switch",
+        translation_key="backlight_switch",
         key="night_mode",
         coordinator_state="CMD_NIGHT",
         func=parse_hex_to_bool,
@@ -395,7 +457,49 @@ SWITCH_DESCRIPTIONS = {
         key="smart_mode",
         coordinator_state="CMD_SMART_MODE",
         func=parse_hex_to_bool,
-        icon="mdi:brain",
+        icon="mdi:water-boiler-auto",
+        entity_category=EntityCategory.CONFIG
+    ),
+    "bss_mode": SyncleoSwitchDescription(
+        translation_key="bss_mode_switch",
+        key="bss_mode",
+        coordinator_state="CMD_BSS",
+        func=parse_hex_to_bool,
+        icon="mdi:bacteria",
+        entity_category=EntityCategory.CONFIG
+    ),
+    "no_frost": SyncleoSwitchDescription(
+        translation_key="no_frost_switch",
+        key="no_frost",
+        coordinator_state="CMD_KEEP_WARM",
+        func=parse_hex_to_bool,
+        icon="mdi:snowflake-off",
+        entity_category=EntityCategory.CONFIG
+    ),
+    "damper": SyncleoSwitchDescription(
+        translation_key="damper_switch",
+        key="damper",
+        coordinator_state="CMD_DAMPER",
+        func=parse_hex_to_bool,
+        icon="mdi:swap-horizontal-circle-outline",
+        entity_category=EntityCategory.CONFIG
+    ),
+    "display_off_heater": SyncleoSwitchDescription(
+        translation_key="display_off_heater_switch",
+        key="display_off_heater",
+        coordinator_state="CMD_PROGRAM_DATA",
+        program_index = "0",
+        byte_index = "1",
+        func=parse_hex_to_bool,
+        entity_category=EntityCategory.CONFIG
+    ),
+    "half_power_heater": SyncleoSwitchDescription(
+        translation_key="half_power_heater_switch",
+        key="half_power_heater",
+        coordinator_state="CMD_PROGRAM_DATA",
+        program_index = "0",
+        byte_index = "0",
+        func=parse_hex_to_bool,
         entity_category=EntityCategory.CONFIG
     ),
 }
@@ -409,6 +513,7 @@ class SyncleoSensorDescription(SyncleoEntityDescription):
     native_unit_of_measurement: Optional[str] = None
     state_class: Optional[SensorStateClass] = None
     expendables_index: str = "0"
+    program_index: str = "0"
 
 SENSOR_DESCRIPTIONS = {
     "temperature": SyncleoSensorDescription(
@@ -478,6 +583,7 @@ SENSOR_DESCRIPTIONS = {
         device_class=None,
         native_unit_of_measurement=UnitOfTime.HOURS,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
         coordinator_state="CMD_EXPENDABLES",
         expendables_index = "0",
         icon="mdi:filter"
@@ -488,10 +594,92 @@ SENSOR_DESCRIPTIONS = {
         device_class=None,
         native_unit_of_measurement=UnitOfTime.HOURS,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
         coordinator_state="CMD_EXPENDABLES",
         expendables_index = "1",
         icon="mdi:cup-water"
     ),
+    "anode_retain": SyncleoSensorDescription(
+        key="anode_retain",
+        name="anode_retain",
+        translation_key="anode_retain_sensor",
+        device_class=None,
+        native_unit_of_measurement=UnitOfTime.DAYS,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        coordinator_state="CMD_EXPENDABLES",
+        expendables_index = "0",
+        icon="mdi:sign-pole",
+    ),
+    "pm_2_5": SyncleoSensorDescription(
+        key="pm_2_5",
+        name="pm_2_5",
+        translation_key="pm2_5_sensor",
+        device_class=None,
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        state_class=SensorStateClass.MEASUREMENT,
+        coordinator_state="CMD_CURRENT_PM2",
+        func=parse_weight,
+        icon="mdi:molecule",
+    ),
+    "co2": SyncleoSensorDescription(
+        key="co2",
+        name="co2",
+        translation_key="co2_sensor",
+        device_class=SensorDeviceClass.CO2,
+        native_unit_of_measurement=CONCENTRATION_PARTS_PER_MILLION,
+        state_class=SensorStateClass.MEASUREMENT,
+        coordinator_state="CMD_CURRENT_CO2",
+        func=parse_weight,
+        icon="mdi:molecule-co2",
+    ),
+    "filter_retain_percent": SyncleoSensorDescription(
+        translation_key="filter_retain_sensor",
+        key="filter_retain",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        coordinator_state="CMD_EXPENDABLES",
+        expendables_index = "0",
+        icon="mdi:filter",
+    ),
+    "pre_filter_retain_percent": SyncleoSensorDescription(
+        translation_key="pre_filter_retain_sensor",
+        key="pre_filter_retain_percent",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        coordinator_state="CMD_EXPENDABLES",
+        expendables_index = "1",
+        icon="mdi:filter",
+    ),
+    "time_to_end": SyncleoSensorDescription(
+        translation_key="time_to_end_turbo_sensor",
+        key="time_to_end",
+        device_class=SensorDeviceClass.DURATION,
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        state_class=SensorStateClass.MEASUREMENT,
+        coordinator_state="CMD_TOTAL_TIME",
+        func=parse_time,
+        icon="mdi:timer",
+    ),
+    "current_power": SyncleoSensorDescription(
+        translation_key="current_power_sensor",
+        key="current_power",
+        device_class=None,
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        coordinator_state="CMD_PROGRAM_DATA",
+        program_index = "0",
+        func=parse_temp,
+        icon="mdi:equalizer",
+    ),
+    
+    
+    
+    
+    
+    
     "firmware": SyncleoSensorDescription(
         translation_key="firmware_version_sensor",
         key="firmware_version",
@@ -525,6 +713,7 @@ class SyncleoSelectDescription(SyncleoEntityDescription):
 SELECT_DESCRIPTIONS = {
     "select_tea_kettle": SyncleoSelectDescription(
         translation_key="select_tea_kettle",
+        name="Preset",
         key="select_tea_kettle",
         options={
             "not_selected": 0,
@@ -545,32 +734,23 @@ SELECT_DESCRIPTIONS = {
         entity_category=EntityCategory.CONFIG,
         icon="mdi:tea"
     ),
-    "mode": SyncleoSelectDescription(
-        translation_key="mode",
-        key="mode",
+    "select_melody": SyncleoSelectDescription(
+        key="select_melody",
+        name="Melody",
+        translation_key="select_melody",
         options={
-            "auto": 1,
-            "manual": 2,
-            "sleep": 3,
-            "turbo": 4
+          "mute": 0,
+          "rainstorm": 1,
+          "surf": 2,
+          "forest": 3,
+          "birdsong": 4,
+          "bonfire": 5,
         },
-        coordinator_mode="CMD_MODE",
+        coordinator_mode="CMD_AMOUNT",
         entity_category=EntityCategory.CONFIG,
-        icon="mdi:format-list-bulleted"
+        icon="mdi:music-note",
     ),
-    "speed": SyncleoSelectDescription(
-        translation_key="speed",
-        key="speed",
-        options={
-            "low": 1,
-            "medium": 2,
-            "high": 3,
-            "turbo": 4
-        },
-        coordinator_mode="CMD_SPEED",
-        entity_category=EntityCategory.CONFIG,
-        icon="mdi:speedometer"
-    ),
+
 }
 
 
@@ -618,7 +798,7 @@ class SyncleoNumberDescription(SyncleoEntityDescription):
     max_value: float = 100
     step: float = 1
     native_unit_of_measurement: Optional[str] = None
-
+    program_index: str = "0"
 
 NUMBER_DESCRIPTIONS = {
     "humidifier_intensity": SyncleoNumberDescription(
@@ -631,6 +811,52 @@ NUMBER_DESCRIPTIONS = {
         entity_category=EntityCategory.CONFIG,
         device_class=None,
         native_unit_of_measurement=None
+    ),
+    "humidifier_intensity_low": SyncleoNumberDescription(
+        translation_key="intensity",
+        key="intensity_low",
+        coordinator_state="CMD_SPEED",
+        min_value=0,
+        max_value=3,
+        step=1,
+        entity_category=EntityCategory.CONFIG,
+        device_class=None,
+        native_unit_of_measurement=None
+    ),
+    "humidifier_evaporation": SyncleoNumberDescription(
+        translation_key="evaporation_rate",
+        key="evaporation_rate",
+        coordinator_state="CMD_SPEED",
+        min_value=1,
+        max_value=3,
+        step=1,
+        entity_category=EntityCategory.CONFIG,
+        device_class=None,
+        native_unit_of_measurement=None
+    ),
+    "temperature_difference_eco": SyncleoNumberDescription(
+        translation_key="temperature_difference_eco",
+        key="temperature_difference_eco",
+        coordinator_state="CMD_PROGRAM_DATA",
+        program_index = "2",
+        min_value=3,
+        max_value=7,
+        step=1,
+        entity_category=EntityCategory.CONFIG,
+        device_class=NumberDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+    ),
+    "temperature_difference_antifrost": SyncleoNumberDescription(
+        translation_key="temperature_difference_antifrost",
+        key="temperature_difference_antifrost",
+        coordinator_state="CMD_PROGRAM_DATA",
+        program_index = "3",
+        min_value=3,
+        max_value=7,
+        step=1,
+        entity_category=EntityCategory.CONFIG,
+        device_class=NumberDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
 }
 
@@ -680,6 +906,103 @@ CLIMATE_DESCRIPTIONS = {
         min_temp = 5,
         max_temp = 25,
         device_class = None,
+    ),
+    "climate_asp_100": SyncleoClimateDescription(
+        name = "Climate",
+        key = "climate_asp_100",
+        translation_key = "climate",
+        fan_mode = "off",
+        fan_modes = {"off": "0", "1_speed": "1", "2_speed": "2", "3_speed": "3", "4_speed": "4", "5_speed": "5", "6_speed": "6", "7_speed": "7"},
+        preset_mode = "passive",
+        preset_modes = {"hands": "1", "auto": "2", "night": "3", "turbo": "4", "passive": "5"},
+        hvac_modes = [HVACMode.OFF, HVACMode.FAN_ONLY],
+        supported_features = (
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.PRESET_MODE
+            | ClimateEntityFeature.FAN_MODE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
+        ),
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_speed="CMD_SPEED",
+        coordinator_mode="CMD_MODE",
+        min_temp = 5,
+        max_temp = 25,
+        temp_step = 1,
+        device_class = None,
+    ),
+    "climate_asp_200": SyncleoClimateDescription(
+        name = "Climate",
+        key = "climate_asp_200",
+        translation_key = "climate",
+        fan_mode = "off",
+        fan_modes = {"off": "0", "1_speed": "1", "2_speed": "2", "3_speed": "3", "4_speed": "4", "5_speed": "5", "6_speed": "6", "7_speed": "7", "8_speed": "8", "9_speed": "9"},
+        preset_mode = "auto",
+        preset_modes = {"hands": "1", "auto": "2", "night": "3", "turbo": "4"},
+        hvac_modes = [HVACMode.OFF, HVACMode.FAN_ONLY],
+        supported_features = (
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.PRESET_MODE
+            | ClimateEntityFeature.FAN_MODE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
+        ),
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_speed="CMD_SPEED",
+        coordinator_mode="CMD_MODE",
+        min_temp = 5,
+        max_temp = 25,
+        temp_step = 1,
+    ),
+    "climate_heater": SyncleoClimateDescription(
+        name = "Heater",
+        key = "heater",
+        translation_key = "heater",
+        fan_mode = "auto",
+        fan_modes = {"auto": "0", "20_5_percent": "1", "40_5_percent": "2", "60_5_percent": "3", "80_5_percent": "4", "100_5_percent": "5"},
+        preset_mode = "comfort",
+        preset_modes = {"comfort": "1", "eco": "2", "away": "3"},
+        hvac_modes = [HVACMode.OFF, HVACMode.HEAT],
+        supported_features = (
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.PRESET_MODE
+            | ClimateEntityFeature.FAN_MODE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
+        ),
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_speed="CMD_SPEED",
+        coordinator_mode="CMD_MODE",
+        min_temp = 5,
+        max_temp = 35,
+        temp_step = 1,
+    ),
+    "climate_heater_4mode": SyncleoClimateDescription(
+        name = "Heater",
+        key = "heater",
+        translation_key = "heater",
+        fan_mode = "auto",
+        fan_modes = {"auto": "0", "10_percent": "1", "20_percent": "2", "30_percent": "3", "40_percent": "4", "50_percent": "5", "60_percent": "6", "70_percent": "7", "80_percent": "8", "90_percent": "9", "100_percent": "10"},
+        preset_mode = "comfort",
+        preset_modes = {"comfort": "1", "eco": "2", "away": "3", "hands": "4"},
+        hvac_modes = [HVACMode.OFF, HVACMode.HEAT],
+        supported_features = (
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.PRESET_MODE
+            | ClimateEntityFeature.FAN_MODE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
+        ),
+        coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
+        coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
+        coordinator_speed="CMD_SPEED",
+        coordinator_mode="CMD_MODE",
+        min_temp = 5,
+        max_temp = 35,
+        temp_step = 1,
     ),
 }
 

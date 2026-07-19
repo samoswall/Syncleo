@@ -4,7 +4,7 @@ from typing import Optional
 from slugify import slugify
 
 from homeassistant.components.water_heater import WaterHeaterEntity, WaterHeaterEntityFeature
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import UnitOfTemperature, STATE_OFF, STATE_ON
 
 from .const import (
     DOMAIN,
@@ -63,11 +63,15 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         self._attr_target_temperature_low = self._min_temp
         self._attr_target_temperature = self._max_temp
         self._attr_operation_list = list(self._operation_list.keys())
-        self._attr_target_temperature_step = 1.0
+        if int(device.devtype) in (2,51,56,60,98,188,223,262,263,275,294,85,139):    # Чайники 1775
+            self._attr_target_temperature_step = 5.0
+        else:
+            self._attr_target_temperature_step = 1.0
         
         # Инициализируем текущую температуру
         self._attr_current_temperature = None
         self._attr_current_operation = None
+        self._attr_is_on = False
         
         # Определяем поддерживаемые функции
         features = WaterHeaterEntityFeature.ON_OFF
@@ -81,6 +85,27 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         if device.vendor == 'Rusclimate':
             self.entity_id = f"water_heater.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
+    @property
+    def state(self) -> Optional[str]:
+        """Возвращает текущее состояние водонагревателя."""
+        if not self.available:
+            return None
+        if not self._coordinator_mode:
+            return None
+        
+        value = self._get_state_from_coordinator(self._coordinator_mode, None)
+        if value is None:
+            return None
+        # Ищем режим по значению
+        for mode, val in self._operation_list.items():
+            if int.from_bytes(value, 'little') == int(val):
+                return mode
+        return None
+
+    @property
+    def supported_features(self) -> WaterHeaterEntityFeature:
+        return self._attr_supported_features
+            
     @property
     def current_temperature(self) -> Optional[float]:
         """Возвращает текущую температуру."""
@@ -114,7 +139,7 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         for mode, val in self._operation_list.items():
             if int.from_bytes(value, 'little') == int(val):
                 return mode
-        
+            
         return None
 
     def _handle_coordinator_update(self) -> None:
@@ -128,11 +153,13 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
                 self._attr_current_temperature = None
                 self._attr_target_temperature = None
                 self._attr_current_operation = None
+                self._attr_is_on = None
             self.async_write_ha_state()
             return
         
         # Обновляем значения только если устройство доступно
         if self.available:
+            
             # Просто вызываем обновление состояния
             self.async_write_ha_state()
 
@@ -158,7 +185,23 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
             # Уведомляем подписчиков (включая эту сущность)
             self.coordinator.async_set_updated_data(new_data)
         payload = bytes([int(temperature), 0])
-        await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
+        _LOGGER.debug("KETTLE %s %s", self.device.device_type_class, self.current_operation)
+        if self.device.device_type_class != "kettle":
+            await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
+
+        if self.device.device_type_class == "kettle" and self.current_operation == "off":
+            await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
+            if int(temperature) == 100:
+                await self.async_send_command(CMD_MODE, b'\x01')
+            else:
+                await self.async_send_command(CMD_MODE, b'\x03')
+        
+        if self.device.device_type_class == "kettle" and self.current_operation in ("electric", "heat_pump", "high_demand"): # Нагрев, Нагрев с удержанием, Кипячение с удержанием
+            if int(temperature) == 100:
+                await self.async_send_command(CMD_MODE, b'\x01')
+            else:
+                await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
+
         self.schedule_update_ha_state()
 
 
@@ -171,10 +214,36 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         if operation_mode not in self._operation_list:
             _LOGGER.warning("Неизвестный режим: %s", operation_mode)
             return
+
         mode_value = self._operation_list[operation_mode]
         _LOGGER.debug("WaterHeater mode %d", int(mode_value))
         if int(mode_value) > 1:
+            if int(self._attr_target_temperature) == 100 and operation_mode in ("high_demand", "electric", "heat_pump"):
+                self._attr_target_temperature = 95
             payload = bytes([int(self._attr_target_temperature), 0])
             await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
         payload = bytes([int(mode_value)])
         await self.async_send_command(CMD_MODE, payload)
+
+        self._attr_current_operation = operation_mode              # проверить без обновления координатора
+        self._attr_is_on = int(mode_value) > 0 or operation_mode != "off"
+        self.async_write_ha_state()
+
+
+    async def async_turn_on(self, **kwargs) -> None:
+        """Включает водонагреватель."""
+        if not self.available:
+            _LOGGER.warning("Нельзя включить водонагреватель на недоступном устройстве %s", self.device.mac)
+            return
+        await self.async_send_command(CMD_MODE, b'\x01')
+        self._attr_is_on = True
+        self.async_write_ha_state()
+
+    async def async_turn_off(self, **kwargs) -> None:
+        """Выключает водонагреватель."""
+        if not self.available:
+            _LOGGER.warning("Нельзя выключить водонагреватель на недоступном устройстве %s", self.device.mac)
+            return
+        await self.async_send_command(CMD_MODE, b'\x00')
+        self._attr_is_on = False
+        self.async_write_ha_state()

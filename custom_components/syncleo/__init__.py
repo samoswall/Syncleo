@@ -2,23 +2,25 @@
 import logging
 
 from homeassistant.core import HomeAssistant
-
+#from .debug_helper import async_setup_debug_services
 from .const import DOMAIN
 from .manager import SyncleoManager
 from .coordinator import SyncleoCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
+DEBUG_ENABLED = True
 
 PLATFORMS = [
-    "sensor", 
-    "switch", 
-    "water_heater", 
-    "humidifier", 
-    "fan", 
-    "select", 
-    "light", 
-    "number", 
+    "sensor",
+    "switch",
+    "water_heater",
+    "humidifier",
+    "fan",
+    "select",
+    "light",
+    "number",
+    "climate",
     "vacuum"
 ]
 
@@ -33,12 +35,11 @@ async def async_setup_entry(hass: HomeAssistant, entry) -> bool:
         manager = hass.data[DOMAIN]["manager"]
 
     initial_info = hass.data.get(DOMAIN, {}).pop("pending_zeroconf", None)
-    _LOGGER.debug("initial_info zeroconf %s entry.data %s %s %s %s", initial_info, entry.data["mac"], entry.data["token"], entry.data["vendor"], entry.data["devtype"])
+    _LOGGER.debug("initial_info zeroconf %s entry.data %s %s %s", initial_info, entry.data["mac"], entry.data["vendor"], entry.data["devtype"])
     manager.add_configured_device(entry.data["mac"], entry.data["token"], entry.data["vendor"], entry.data["devtype"], entry.data["firmware"])
     await manager.async_start(initial_info=initial_info)
  
     device = manager.configured_devices[entry.data["mac"]]
-    _LOGGER.debug("init data device %s", device)
     
     # Создаем координатор и ЗАПУСКАЕМ ПОСТОЯННОЕ ПОДКЛЮЧЕНИЕ
     coordinator = SyncleoCoordinator(hass, device)
@@ -54,6 +55,12 @@ async def async_setup_entry(hass: HomeAssistant, entry) -> bool:
     
     # Регистрируем платформы
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    
+    
+    # Для отладки - регистрируем сервисы
+#    if DEBUG_ENABLED:
+#        await async_setup_debug_services(hass)
+        
     
     return True
 
