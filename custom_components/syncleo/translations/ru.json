@@ -62,16 +62,16 @@
       "damper_switch": {
         "name": "Рециркуляция"
       },
-      "damper_heater_switch": {
+      "damper_heater": {
         "name": "Обнаружение открытого окна"
       },
-      "display_off_heater_switch": {
+      "display_off_heater": {
         "name": "Автоотключение дисплея"
       },
-      "half_power_heater_switch": {
+      "half_power_heater": {
         "name": "Половина мощности"
       },
-      "backlight_bright_switch": {
+      "backlight_bright": {
         "name": "Яркость 50/100"
       },
       "turbo_switch": {
