@@ -14,12 +14,18 @@ from .const import (
     CMD_SPEED,
     CMD_TARGET_HUMIDITY,
 )
+from . import const as const_module
 from .entity import SyncleoEntity
 from .entity_description import NUMBER_DESCRIPTIONS
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
 
+def get_command_from_state_key(state_key: str):
+    """Получает числовое значение команды из строкового имени."""
+    if not state_key:
+        return None
+    return getattr(const_module, state_key, None)
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Настройка чисел."""
@@ -56,7 +62,10 @@ class SyncleoNumberEntity(SyncleoEntity, NumberEntity):
         self._max_value = getattr(desc, "max_value", 100)
         self._step = getattr(desc, "step", 1)
         self._native_unit = getattr(desc, "native_unit_of_measurement", None)
-        self._coordinator_state = getattr(desc, "coordinator_state", None)
+        self._func = getattr(desc, 'func', None)
+        self._state_key = getattr(desc, "coordinator_state", None)
+        self._command = get_command_from_state_key(self._state_key)
+        self._program_index = getattr(desc, 'program_index', None)
 
         self._attr_native_min_value = self._min_value
         self._attr_native_max_value = self._max_value
@@ -73,7 +82,7 @@ class SyncleoNumberEntity(SyncleoEntity, NumberEntity):
                 f"number.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
             )
-        if device.vendor == "Rusclimate":
+        if device.vendor == "RusClimate":
             self.entity_id = (
                 f"number.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
@@ -85,17 +94,22 @@ class SyncleoNumberEntity(SyncleoEntity, NumberEntity):
         if not self.available:
             return None
 
-        if not self._coordinator_state:
-            return self._attr_native_value
-
-        value = self._get_state_from_coordinator(self._coordinator_state, None)
-        if value is None:
-            return self._attr_native_value
-
-        # Преобразуем байты в число
-        if isinstance(value, bytes):
-            return int.from_bytes(value, "little")
-
+        if not self._state_key:
+            return None
+        
+        if self._state_key == "CMD_PROGRAM_DATA":
+            if not self.coordinator.data:
+                return None
+            value_data = self.coordinator.data.get("CMD_PROGRAM_DATA", {})
+            value = value_data.get(self._program_index)
+            if value is None:
+                return None
+            value = int(value)
+        else:
+            value = self._get_state_from_coordinator(self._state_key, self._func)
+            if value is None:
+                return None
+            value = int.from_bytes(value)
         return value
 
     def _handle_coordinator_update(self) -> None:
@@ -120,23 +134,19 @@ class SyncleoNumberEntity(SyncleoEntity, NumberEntity):
             _LOGGER.warning("Нельзя установить значение на недоступном устройстве %s", self.device.mac)
             return
 
-        value = max(self._min_value, min(self._max_value, value))
+        if self._command is None:
+            _LOGGER.error("Неизвестная команда для переключателя %s (state_key=%s)", 
+                         self.entity_key, self._state_key)
+            return
 
-        # Определяем команду по ключу
-        cmd_map = {
-            "cooking_time": CMD_TARGET_TIME,
-            "humidifier_intensity": CMD_SPEED,
-            "humidity": CMD_TARGET_HUMIDITY,
-        }
-
-        cmd = cmd_map.get(self.entity_key, CMD_TARGET_TEMPERATURE)
-
-        # Для температуры используем 2 байта
-        if self.entity_key == "cooking_time":
-            payload = int(value).to_bytes(2, "little")
+        value = int(max(self._min_value, min(self._max_value, value)))
+        if self._state_key == "CMD_PROGRAM_DATA":
+            if not self.coordinator.data:
+                return None
+            index = int(self._program_index)
+            payload = bytes([index, int(value)])
+            await self.async_send_command(self._command, payload)
         else:
-            payload = bytes([int(value)])
-
-        await self.async_send_command(cmd, payload)
-        self._attr_native_value = value
+            await self.async_send_command(self._command, bytes([value]))
+            
         self.async_write_ha_state()

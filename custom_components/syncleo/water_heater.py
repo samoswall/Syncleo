@@ -82,7 +82,7 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         self._attr_unique_id = slugify(f"{device.mac}_{key}")
         if device.vendor == 'Polaris':
             self.entity_id = f"water_heater.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Rusclimate':
+        if device.vendor == 'RusClimate':
             self.entity_id = f"water_heater.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
@@ -113,7 +113,7 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
             return None
         if not self._coordinator_current:
             return None
-        return self._get_state_from_coordinator(self._coordinator_current, parse_temp)
+        return max(self._attr_min_temp, min(self._get_state_from_coordinator(self._coordinator_current, parse_temp), self._attr_max_temp))
 
     @property
     def target_temperature(self) -> Optional[float]:
@@ -176,16 +176,16 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         # Округляем и ограничиваем температуру
         temperature = max(self._min_temp, min(self._max_temp, int(temperature)))
         self._attr_target_temperature = temperature
-        if self.coordinator.data:
-            new_data = dict(self.coordinator.data)
-            temp_bytes = temperature.to_bytes(2, 'little')
-            new_data["CMD_TARGET_TEMPERATURE"] = temp_bytes.hex()
+#        if self.coordinator.data:
+#            new_data = dict(self.coordinator.data)
+#            temp_bytes = temperature.to_bytes(2, 'little')
+#            new_data["CMD_TARGET_TEMPERATURE"] = temp_bytes.hex()
             # Обновляем данные координатора
-            self.coordinator.data = new_data
+#            self.coordinator.data = new_data
             # Уведомляем подписчиков (включая эту сущность)
-            self.coordinator.async_set_updated_data(new_data)
+#            self.coordinator.async_set_updated_data(new_data)
         payload = bytes([int(temperature), 0])
-        _LOGGER.debug("KETTLE %s %s", self.device.device_type_class, self.current_operation)
+#        _LOGGER.debug("KETTLE %s %s", self.device.device_type_class, self.current_operation)
         if self.device.device_type_class != "kettle":
             await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
 
@@ -201,7 +201,12 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
                 await self.async_send_command(CMD_MODE, b'\x01')
             else:
                 await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
-
+        
+        if self.device.device_type_class == "kettle" and self.current_operation in ("performance", "eco", "gas"): # Кипячение, IQ Кипячение, Чайная церемония
+            if int(temperature) < 100:
+                await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)
+                await self.async_send_command(CMD_MODE, b'\x03')
+        
         self.schedule_update_ha_state()
 
 
@@ -218,7 +223,7 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
         mode_value = self._operation_list[operation_mode]
         _LOGGER.debug("WaterHeater mode %d", int(mode_value))
         if int(mode_value) > 1:
-            if int(self._attr_target_temperature) == 100 and operation_mode in ("high_demand", "electric", "heat_pump"):
+            if int(self._attr_target_temperature) == 100 and operation_mode in ("high_demand", "electric", "heat_pump"): # Нагрев, Нагрев с удержанием, Кипячение с удержанием
                 self._attr_target_temperature = 95
             payload = bytes([int(self._attr_target_temperature), 0])
             await self.async_send_command(CMD_TARGET_TEMPERATURE, payload)

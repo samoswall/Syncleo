@@ -100,14 +100,14 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
                 f"humidifier.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
             )
-        if device.vendor == "Rusclimate":
+        if device.vendor == "RusClimate":
             self.entity_id = (
                 f"humidifier.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}"
                 f"_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
             )
 
-        _LOGGER.debug("Created humidifier entity: %s", self.entity_id)
-        _LOGGER.debug("Available modes: %s", self._attr_available_modes)
+#        _LOGGER.debug("Created humidifier entity: %s", self.entity_id)
+#        _LOGGER.debug("Available modes: %s", self._attr_available_modes)
 
     @property
     def is_on(self) -> bool:
@@ -158,7 +158,7 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
             except ValueError:
                 return None
 
-        _LOGGER.debug("Current mode value: %d, operation_list: %s", value, self._operation_list)
+#        _LOGGER.debug("Current mode value: %d, operation_list: %s", value, self._operation_list)
 
         # Ищем режим по значению
         for mode_name, mode_val in self._operation_list.items():
@@ -219,7 +219,7 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
             return
 
         mode_value = int(self._operation_list[mode])
-        _LOGGER.debug("Setting mode: %s (value: %d)", mode, mode_value)
+#        _LOGGER.debug("Setting mode: %s (value: %d)", mode, mode_value)
         payload = bytes([mode_value])
         await self.async_send_command(CMD_MODE, payload)
 
@@ -233,11 +233,11 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
         available_modes = [m for m in self._operation_list.keys() if m != "off"]
         if available_modes:
             first_mode = available_modes[0]
-            _LOGGER.debug("Turning on with mode: %s", first_mode)
+#            _LOGGER.debug("Turning on with mode: %s", first_mode)
             await self.async_set_mode(first_mode)
         else:
             # Иначе отправляем команду включения (режим 1)
-            _LOGGER.debug("Turning on with default mode 1")
+#            _LOGGER.debug("Turning on with default mode 1")
             await self.async_send_command(CMD_MODE, b"\x01")
 
     async def async_turn_off(self, **kwargs) -> None:
@@ -247,5 +247,5 @@ class SyncleoHumidifierEntity(SyncleoEntity, HumidifierEntity):
             return
 
         # Отправляем команду выключения (режим 0)
-        _LOGGER.debug("Turning off")
+#        _LOGGER.debug("Turning off")
         await self.async_send_command(CMD_MODE, b"\x00")

@@ -407,3 +407,52 @@ class SyncleoCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> Dict[str, Any]:
         return self.data if self.data else {"available": False}
+        
+        
+    def debug_simulate_device_message(self, cmd: int, data_hex: str) -> None:
+        """Отладочный метод для имитации входящего сообщения от устройства.
+        Args:
+            cmd: Код команды (например, 0x14 для CMD_CURRENT_TEMPERATURE)
+            data_hex: Данные в hex формате (например, "3c00" для 60°C)
+        """
+        cmd_name = CMD_NAMES.get(cmd, f"CMD_UNKNOWN_0x{cmd:02X}")
+        data = bytes.fromhex(data_hex) if data_hex else b""
+        
+        _LOGGER.info("🎮 DEBUG: Имитация сообщения от %s: %s | Data: %s", 
+                     self.device.mac, cmd_name, data.hex() if data else "(empty)")
+    
+        # 1. ФОРМИРУЕМ НОВОЕ СОСТОЯНИЕ (та же логика что в _handle_incoming_packet)
+        new_state = dict(self.data)
+        new_state["available"] = True
+        new_state["last_cmd"] = cmd_name
+    
+        # 2. Обработка CMD_PROGRAM_DATA (0x42)
+        if cmd == 0x42:
+            if data:
+                index = data[0]
+                payload_hex = data[1:].hex() if len(data) > 1 else ""
+                programs = dict(new_state.get("CMD_PROGRAM_DATA", {}))
+                programs[str(index)] = payload_hex
+                new_state["CMD_PROGRAM_DATA"] = programs
+                _LOGGER.debug("  → Обновлен Program Data: %s", programs)
+        
+        # 3. Обработка CMD_EXPENDABLES (0x22)
+        elif cmd == 0x22:
+            if data:
+                filter_data = {}
+                for i in range(6):
+                    offset = i * 2
+                    if len(data) >= offset + 2:
+                        filter_bytes = int.from_bytes(data[offset:offset + 2], 'little')
+                        filter_data[str(i)] = filter_bytes
+                new_state["CMD_EXPENDABLES"] = filter_data
+                _LOGGER.debug("  → Обновлен Expendables: %s", filter_data)
+        
+        # 4. Для всех остальных команд сохраняем hex строки
+        else:
+            new_state[cmd_name] = data.hex()
+    
+        # 5. Пушим новые данные в Home Assistant
+        if cmd != 0xFF:  # Игнорируем PING
+            self.async_set_updated_data(new_state)
+            _LOGGER.debug("  → Координатор обновлен: %s", self.data)

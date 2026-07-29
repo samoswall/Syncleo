@@ -1,0 +1,298 @@
+{
+  "entity": {
+    "humidifier": {
+      "humidifier": {
+        "default": "mdi:air-humidifier",
+        "state": {
+          "off": "mdi:air-humidifier-off"
+        },
+        "state_attributes": {
+          "mode": {
+            "state": {
+              "auto": "mdi:refresh-auto",
+              "baby": "mdi:baby-carriage",
+              "boost": "mdi:rocket-launch",
+              "comfort": "mdi:heart-pulse",
+              "eco": "mdi:cloud-percent",
+              "home": "mdi:gesture-tap",
+              "sleep": "mdi:power-sleep",
+              "fitnes": "mdi:walk",
+              "yoga": "mdi:yoga",
+              "meditation": "mdi:meditation",
+              "prana_hand": "mdi:human-handsdown",
+              "prana_auto": "mdi:human-handsup",
+              "aroma": "mdi:scent"
+            }
+          }
+        }
+      }
+    },
+    "water_heater": {
+      "water_heater": {
+        "default": "mdi:kettle",
+        "state": {
+          "off": "mdi:kettle-off"
+        },
+        "state_attributes": {
+          "operation_mode": {
+            "default": "mdi:circle-medium",
+            "state": {
+              "eco": "mdi:water-plus",
+              "electric": "mdi:heat-wave",
+              "gas": "mdi:fire-circle",
+              "heat_pump": "mdi:water-thermometer",
+              "high_demand": "mdi:finance",
+              "off": "mdi:power",
+              "performance": "mdi:chart-bubble"
+            }
+          }
+        }
+      },
+      "water_boiler": {
+        "default": "mdi:water-boiler",
+        "state": {
+          "off": "mdi:water-boiler-off"
+        },
+        "state_attributes": {
+          "operation_mode": {
+            "state": {
+              "off": "mdi:power",
+              "performance": "mdi:thermometer-low",
+              "electric": "mdi:thermometer",
+              "heat_pump": "mdi:thermometer-high",
+              "eco": "mdi:leaf",
+              "gas": "mdi:snowflake-off"
+            }
+          }
+        }
+      }
+    },
+    "switch": {
+      "sound_switch": {
+        "default": "mdi:volume-high",
+        "state": {
+          "off": "mdi:volume-off"
+        }
+      },
+      "child_lock_switch": {
+        "default": "mdi:lock-open-variant",
+        "state": {
+          "on": "mdi:lock"
+        }
+      },
+      "backlight_switch": {
+        "default": "mdi:alarm-light",
+        "state": {
+          "off": "mdi:alarm-light-off"
+        }
+      },
+      "backlight_bottom_switch": {
+        "default": "mdi:lightbulb-on",
+        "state": {
+          "off": "mdi:lightbulb-on-50"
+        }
+      },
+      "backlight_bright": {
+        "default": "mdi:lightbulb-on",
+        "state": {
+          "off": "mdi:lightbulb-on-50"
+        }
+      },
+      "damper_heater": {
+        "default": "mdi:window-closed-variant",
+        "state": {
+          "on": "mdi:window-open-variant"
+        }
+      },
+      "display_off_heater": {
+        "default": "mdi:lightbulb",
+        "state": {
+          "on": "mdi:lightbulb-auto"
+        }
+      },
+      "half_power_heater": {
+        "default": "mdi:fraction-one-half",
+        "state": {
+          "off": "mdi:fraction-one-half"
+        }
+      },
+      "auto_heater_switch": {
+        "default": "mdi:snowflake",
+        "state": {
+          "off": "mdi:snowflake-off"
+        }
+      },
+      "self_cleaning": {
+        "default": "mdi:autorenew",
+        "state": {
+          "off": "mdi:autorenew-off"
+        }
+      },
+      "eco_mode_switch": {
+        "default": "mdi:leaf",
+        "state": {
+          "off": "mdi:leaf-off"
+        }
+      }
+    },
+    "binary_sensor": {
+      "base_binary_sensor": {
+        "default": "mdi:home",
+        "state": {
+          "on": "mdi:home-off"
+        }
+      },
+      "water_tank_binary_sensor": {
+        "default": "mdi:cup",
+        "state": {
+          "on": "mdi:cup-off"
+        }
+      },
+      "lid_binary_sensor": {
+        "default": "mdi:pot",
+        "state": {
+          "on": "mdi:pot-steam"
+        }
+      },
+      "cappuccinator_binary_sensor": {
+        "default": "mdi:cup-off",
+        "state": {
+          "on": "mdi:cup"
+        }
+      }
+    },
+    "climate": {
+      "climate": {
+        "default": "mdi:hvac",
+        "state": {
+          "off": "mdi:hvac-off"
+        },
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "1_speed": "mdi:fan",
+              "2_speed": "mdi:fan",
+              "3_speed": "mdi:fan",
+              "4_speed": "mdi:fan",
+              "5_speed": "mdi:fan",
+              "6_speed": "mdi:fan",
+              "7_speed": "mdi:fan",
+              "8_speed": "mdi:fan",
+              "9_speed": "mdi:fan",
+              "off": "mdi:fan-off"
+            }
+          },
+          "preset_mode": {
+            "default": "mdi:hvac",
+            "state": {
+              "hands": "mdi:gesture-tap",
+              "auto": "mdi:molecule-co2",
+              "night": "mdi:weather-night",
+              "turbo": "mdi:rocket-launch",
+              "passive": "mdi:air-filter"
+            }
+          }
+        }
+      },
+      "aircleaner": {
+        "default": "mdi:air-purifier",
+        "state": {
+          "off": "mdi:air-purifier-off"
+        },
+        "state_attributes": {
+          "preset_mode": {
+            "default": "mdi:hvac",
+            "state": {
+              "hands": "mdi:gesture-tap",
+              "auto": "mdi:refresh-auto",
+              "night": "mdi:weather-night"
+            }
+          },
+          "fan_mode": {
+            "state": {
+              "top": "mdi:rocket-launch"
+            }
+          }
+        }
+      },
+      "heater": {
+        "default": "mdi:radiator",
+        "state": {
+          "off": "mdi:radiator-off"
+        },
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "auto": "mdi:flash-auto",
+              "10_percent": "mdi:numeric-1-box",
+              "20_percent": "mdi:numeric-2-box",
+              "30_percent": "mdi:numeric-3-box",
+              "40_percent": "mdi:numeric-4-box",
+              "50_percent": "mdi:numeric-5-box",
+              "60_percent": "mdi:numeric-6-box",
+              "70_percent": "mdi:numeric-7-box",
+              "80_percent": "mdi:numeric-8-box",
+              "90_percent": "mdi:numeric-9-box",
+              "100_percent": "mdi:numeric-10-box",
+              "20_5_percent": "mdi:numeric-1-box",
+              "40_5_percent": "mdi:numeric-2-box",
+              "60_5_percent": "mdi:numeric-3-box",
+              "80_5_percent": "mdi:numeric-4-box",
+              "100_5_percent": "mdi:numeric-5-box"
+            }
+          },
+          "preset_mode": {
+            "state": {
+              "hands": "mdi:gesture-tap"
+            }
+          }
+        }
+      },
+      "conditioner": {
+        "default": "mdi:air-conditioner",
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "quite": "mdi:fan",
+              "min": "mdi:fan-minus",
+              "low": "mdi:fan-speed-1",
+              "middle": "mdi:fan-speed-2",
+              "high": "mdi:fan-speed-3",
+              "max": "mdi:fan-plus",
+              "turbo": "mdi:fan-plus"
+            }
+          }
+        }
+      },
+      "thermostat": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "turbo": "mdi:rocket-launch",
+              "antifrost": "mdi:snowflake-off",
+              "schedule": "mdi:calendar-blank",
+              "vacation": "mdi:plane-car",
+              "manual": "mdi:cog"
+            }
+          }
+        }
+      }
+    },
+    "fan": {
+      "fan":{
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "off": "mdi:fan-off",
+              "standart": "mdi:wind-power",
+              "breeze": "mdi:weather-windy",
+              "night": "mdi:weather-night",
+              "eco": "mdi:leaf",
+              "auto": "mdi:fan-auto"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -55,6 +55,7 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
         self._state_key = getattr(desc, 'coordinator_state', None)
         self._expendables_index = getattr(desc, 'expendables_index', "0")
         self._program_index = getattr(desc, 'program_index', "0")
+        self._byte_index = getattr(desc, 'byte_index', None)
         self._func = getattr(desc, 'func', None)
         self._attr_has_entity_name = True
         
@@ -65,7 +66,7 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
         self._attr_unique_id = slugify(f"{device.mac}_{key}")
         if device.vendor == 'Polaris':
             self.entity_id = f"sensor.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Rusclimate':
+        if device.vendor == 'RusClimate':
             self.entity_id = f"sensor.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
@@ -92,9 +93,11 @@ class SyncleoSensorEntity(SyncleoEntity, SensorEntity):
         elif self._state_key == "CMD_PROGRAM_DATA":
             if not self.coordinator.data:
                 return None
-            value_data = self.coordinator.data.get("CMD_EXPENDABLES", {})
+            value_data = self.coordinator.data.get("CMD_PROGRAM_DATA", {})
             value = value_data.get(self._program_index)
-            # Возможно нужен парсер и умножение на 10 или 20
+            if self._byte_index is not None and value is not None:
+                value = int(value[int(self._byte_index):int(self._byte_index)+2], 16) * 10
+                _LOGGER.debug("Value byte_index %s value %s", self._byte_index, value)
         else:
             value = self._get_state_from_coordinator(self._state_key, self._func)
         return value

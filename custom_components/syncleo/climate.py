@@ -51,11 +51,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             if key in CLIMATE_DESCRIPTIONS:
                 desc = CLIMATE_DESCRIPTIONS[key]
                 entities.append(SyncleoClimateEntity(coordinator, device, key, desc))
-                _LOGGER.debug("Added climate entity with key: %s", key)
-            else:
-                _LOGGER.warning("Description not found for climate key: %s", key)
 
-    _LOGGER.info("Adding %d climate entities", len(entities))
     async_add_entities(entities)
 
 
@@ -64,8 +60,8 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
 
     should_poll = False
 
-    def __init__(self, coordinator, device, key):
-        super().__init__(coordinator, device, "climate", key, None)
+    def __init__(self, coordinator, device, key, desc):
+        super().__init__(coordinator, device, "climate", key, desc)
 
         self._min_temp = getattr(desc, 'min_temp', 5)
         self._max_temp = getattr(desc, 'max_temp', 25)
@@ -74,6 +70,7 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
         self._preset_mode = getattr(desc, 'preset_mode', "auto")
         self._preset_modes = getattr(desc, 'preset_modes', {})
         self._hvac_modes = getattr(desc, 'hvac_modes', {})
+        self._hvac_mode = getattr(desc, 'hvac_mode', HVACMode.OFF)
         self._supported_features = getattr(desc, 'supported_features', 1)
         self._swing_mode = getattr(desc, 'swing_mode', "off")
         self._swing_modes = getattr(desc, 'swing_modes', {})
@@ -94,9 +91,9 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
         self._attr_precision = 1.0
         
         self._attr_fan_mode = self._fan_mode
-        self._attr_fan_modes = self._fan_modes
+        self._attr_fan_modes = list(self._fan_modes.keys())
         self._attr_preset_mode = self._preset_mode
-        self._attr_preset_modes = self._preset_modes
+        self._attr_preset_modes = list(self._preset_modes.keys())
         self._attr_hvac_modes = self._hvac_modes
         self._attr_hvac_mode = self._hvac_mode
         self._attr_supported_features = self._supported_features
@@ -108,7 +105,7 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
 
         if device.vendor == "Polaris":
             self.entity_id = f"climate.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == "Rusclimate":
+        if device.vendor == "RusClimate":
             self.entity_id = f"climate.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
@@ -140,7 +137,10 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
         if mode_value is None:
             return None
         val = int.from_bytes(mode_value, "little")
-        val_mode = self._attr_hvac_modes[val]
+        if val >= len(self._attr_hvac_modes):
+            val_mode = self._attr_hvac_modes[len(self._attr_hvac_modes)-1]
+        else:
+            val_mode = self._attr_hvac_modes[val]
         return val_mode
 
 
@@ -171,9 +171,12 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
         if mode_value is None:
             return None
         val = int.from_bytes(mode_value, "little")
-        for mode_name, mode_val in self._preset_modes.items():
-            if val == int(mode_val):
-                val_mode = mode_name
+        if val == 0:
+            return None
+        else:
+            for mode_name, mode_val in self._preset_modes.items():
+                if val == int(mode_val):
+                    val_mode = mode_name
         return val_mode
 
     @property
@@ -255,6 +258,8 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
 
         preset_value = self._preset_modes[preset_mode]
         payload = bytes([int(preset_value)])
+        if int(device.devtype) == 46 and device.vendor == "RusClimate":
+            await self.async_send_command(CMD_SPEED, b'\x01')
         await self.async_send_command(CMD_MODE, payload)
         # Обновляем состояние
         self._attr_preset_mode = preset_mode

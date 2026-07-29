@@ -2,14 +2,14 @@
 import logging
 
 from homeassistant.core import HomeAssistant
-#from .debug_helper import async_setup_debug_services
 from .const import DOMAIN
 from .manager import SyncleoManager
 from .coordinator import SyncleoCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
-DEBUG_ENABLED = True
+DEBUG_ENABLED = False
+
 
 PLATFORMS = [
     "sensor",
@@ -58,8 +58,9 @@ async def async_setup_entry(hass: HomeAssistant, entry) -> bool:
     
     
     # Для отладки - регистрируем сервисы
-#    if DEBUG_ENABLED:
-#        await async_setup_debug_services(hass)
+    if DEBUG_ENABLED:
+        from .debug_helper import async_setup_debug_services
+        await async_setup_debug_services(hass)
         
     
     return True

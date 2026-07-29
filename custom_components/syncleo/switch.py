@@ -1,4 +1,3 @@
-# switch.py - упрощенная версия
 import logging
 from typing import Any
 from slugify import slugify
@@ -67,7 +66,7 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
         
         if device.vendor == 'Polaris':
             self.entity_id = f"switch.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        if device.vendor == 'Rusclimate':
+        if device.vendor == 'RusClimate':
             self.entity_id = f"switch.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property
@@ -81,9 +80,11 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
                 return None
             value_data = self.coordinator.data.get("CMD_PROGRAM_DATA", {})
             value = value_data.get(self._program_index)
-            if self._bite_index is not None:
-                hex_arr = hexbytes.fromhex(value)
-                value = hex_arr[int(self._bite_index)]
+            _LOGGER.debug("Value PROGRAM_DATA %s", value)
+            if self._byte_index is not None and value is not None:
+                hex_arr = bytes.fromhex(value)
+                value = hex_arr[int(self._byte_index)]
+                _LOGGER.debug("byte_index %s value %s", self._byte_index, value)
         else:
             value = self._get_state_from_coordinator(self._state_key, self._func)
         return bool(value) if value is not None else False
@@ -119,14 +120,16 @@ class SyncleoSwitchEntity(SyncleoEntity, SwitchEntity):
             if not self.coordinator.data:
                 return None
             index = int(self._program_index)
-            if self._bite_index is not None:
+            if self._byte_index is not None:
                 value_data = self.coordinator.data.get("CMD_PROGRAM_DATA", {})
                 value = value_data.get(self._program_index)
-                hex_arr = hexbytes.fromhex(value)
-                hex_arr[int(self._byte_index)] = bytes([1]) if state else bytes([0])
-                payload = bytes([index]) + hex_arr
+                hex_arr = bytearray.fromhex(value)
+                _LOGGER.debug("hex_arr %s type %s byte %d", hex_arr, type(hex_arr),int(self._byte_index))
+                hex_arr[int(self._byte_index)] = 1 if state else 0
+                payload = bytes([index]) + bytes(hex_arr)
             else:
                 payload = bytes([index, 1]) if state else bytes([index, 0])
+            _LOGGER.debug("payload %s", payload)
             await self.async_send_command(self._command, payload)
         else:
             await self.async_send_command(self._command, b'\x01' if state else b'\x00')

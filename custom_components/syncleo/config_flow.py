@@ -29,7 +29,7 @@ class SyncleoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Обрабатывает обнаружение устройства через Zeroconf."""
         self._discovery_info = discovery_info
         _LOGGER.info("Discovered device via zeroconf: %s", self._discovery_info)
-        
+
         # Извлекаем MAC адрес (теперь свойства - это строки, а не байты)
         props = discovery_info.properties
         mac = props.get('macaddr', '')
@@ -37,7 +37,8 @@ class SyncleoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         vendor = props.get('vendor', '')
         devtype = props.get('devtype', '')
         firmware = props.get('firmware', '')
-        
+#        if vendor in ("Rusclimat", "rusclimat", "RusClimat", "Rusclimate", "rusclimate", "RusClimate", "Rusklimat", "rusklimat", "RusKlimat", "Rusklimate", "rusklimate", "RusKlimate"):
+#            vendor = "Rusclimate" 
         if not mac:
             return self.async_abort(reason="unknown_device")
 
@@ -82,11 +83,13 @@ class SyncleoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # Получаем данные для красивого отображения в UI
         vendor = self._discovery_info.properties.get('vendor', 'Unknown')
+#        if vendor in ("Rusclimat", "rusclimat", "RusClimat", "Rusclimate", "rusclimate", "RusClimate", "Rusklimat", "rusklimat", "RusKlimat", "Rusklimate", "rusklimate", "RusKlimate"):
+#            vendor = "Rusclimate"
         devtype = self._discovery_info.properties.get('devtype', '0')
         _LOGGER.debug("Discovered device: %s", self._discovery_info)
         if vendor == 'Polaris':
             device_info = POLARIS_DEVICE[int(devtype)]
-        elif vendor == 'Rusclimate':
+        elif vendor == 'RusClimate':
             device_info = HOMMYN_DEVICE[int(devtype)]
         else:
             device_info = HOMMYN_DEVICE[0]
@@ -111,3 +114,22 @@ class SyncleoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Обычный шаг добавления вручную."""
         return self.async_abort(reason="no_devices_found")
+        
+        
+        
+    async def async_step_import(self, import_data: Optional[Dict[str, Any]] = None) -> FlowResult:
+        """Обрабатывает программное добавление устройства (через отладочный сервис)."""
+        if import_data is None:
+            return self.async_abort(reason="unknown_device")
+
+        mac = import_data.get("mac", "")
+        if not mac:
+            return self.async_abort(reason="unknown_device")
+
+        await self.async_set_unique_id(mac)
+        self._abort_if_unique_id_configured()
+
+        return self.async_create_entry(
+            title=f"Debug {mac}",
+            data=import_data,
+        )

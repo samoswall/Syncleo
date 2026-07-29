@@ -57,7 +57,7 @@ class SyncleoLightEntity(SyncleoEntity, LightEntity):
             
         if device.vendor == 'Polaris':
             self.entity_id = f"light.{POLARIS_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{POLARIS_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
-        elif device.vendor == 'Rusclimate':
+        elif device.vendor == 'RusClimate':
             self.entity_id = f"light.{HOMMYN_DEVICE[int(device.devtype)]['class'].replace('-', '_').lower()}_{HOMMYN_DEVICE[int(device.devtype)]['model'].replace('-', '_').lower()}_{key.replace('-', '_').lower()}"
 
     @property

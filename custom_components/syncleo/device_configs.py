@@ -585,7 +585,7 @@ HOMMYN_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
     6: {
         "climate": ["climate_heater"],
         "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
-        "switch": ["power", "sound", "backlight", "child_lock", "damper", "display_off_heater"],
+        "switch": ["power", "sound", "backlight", "child_lock", "damper_heater", "display_off_heater"],
         "number": ["temperature_difference_eco", "temperature_difference_antifrost"]
         
     },
@@ -593,18 +593,17 @@ HOMMYN_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
         "climate": ["climate_heater"],
         "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
         "switch": ["child_lock", "backlight"]
-
     },
     46: {
         "climate": ["climate_heater_4mode"],
         "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
-        "switch": ["power", "sound", "backlight", "child_lock", "damper", "display_off_heater", "half_power_heater"],
+        "switch": ["power", "sound", "backlight_bright", "child_lock", "damper_heater", "display_off_heater", "half_power_heater"],
         "number": ["temperature_difference_eco", "temperature_difference_antifrost"]
     },
     47: {
         "climate": ["climate_heater"],
         "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
-        "switch": ["power", "sound", "backlight", "child_lock", "damper", "display_off_heater"],
+        "switch": ["power", "sound", "backlight", "child_lock", "damper_heater", "display_off_heater"],
         "number": ["temperature_difference_eco", "temperature_difference_antifrost"]
     },
     49: {

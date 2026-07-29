@@ -61,8 +61,8 @@ def parse_speed(data: bytes) -> int:
 
 def parse_power(data: bytes) -> int:
     """Парсинг мощности."""
-    if len(data) >= 2:
-        return int.from_bytes(data[:2], 'little')
+    if len(data) >= 1:
+        return int.from_bytes(data[0], 'little') * 10
     return 0
 
 def parse_weight(data: bytes) -> float:
@@ -110,7 +110,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-#        icon="mdi:kettle"
+        icon="mdi:kettle"
     ),
     "kettle_with_tea_time": SyncleoWaterHeaterDescription(
         key="kettle_with_tea_time",
@@ -122,7 +122,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-#        icon="mdi:kettle"
+        icon="mdi:kettle"
     ),
     "kettle_with_tea_time_keep_with_warm": SyncleoWaterHeaterDescription(
         key="kettle_with_tea_time_keep_with_warm",
@@ -134,7 +134,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-#        icon="mdi:kettle"
+        icon="mdi:kettle"
     ),
     "water_boiler": SyncleoWaterHeaterDescription(
         key="water_boiler",
@@ -146,7 +146,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-#        icon="mdi:kettle"
+        icon="mdi:kettle"
     ),
     "water_boiler_antifrost": SyncleoWaterHeaterDescription(
         key="water_boiler_antifrost",
@@ -158,7 +158,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-#        icon="mdi:kettle"
+        icon="mdi:kettle"
     ),
     "water_boiler_eco": SyncleoWaterHeaterDescription(
         key="water_boiler_eco",
@@ -170,7 +170,7 @@ WATER_HEATER_DESCRIPTIONS = {
         coordinator_mode="CMD_MODE",
         coordinator_target_temperature="CMD_TARGET_TEMPERATURE",
         coordinator_current_temperature="CMD_CURRENT_TEMPERATURE",
-#        icon="mdi:kettle"
+        icon="mdi:kettle"
     ),
 }
 
@@ -396,11 +396,11 @@ SWITCH_DESCRIPTIONS = {
         entity_category=EntityCategory.CONFIG
     ),
     "backlight_bright": SyncleoSwitchDescription(
-        translation_key="backlight_bright_switch",
+        translation_key="backlight_bright",
         key="backlight_bright",
         coordinator_state="CMD_BACKLIGHT",
         func=parse_hex_to_bool,
-        icon="mdi:lightbulb",
+#        icon="mdi:lightbulb",
         entity_category=EntityCategory.CONFIG
     ),
     "backlight_bright_pd": SyncleoSwitchDescription(
@@ -409,7 +409,7 @@ SWITCH_DESCRIPTIONS = {
         coordinator_state="CMD_PROGRAM_DATA",
         program_index="0",
         func=parse_hex_to_bool,
-        icon="mdi:lightbulb",
+#        icon="mdi:lightbulb",
         entity_category=EntityCategory.CONFIG
     ),
     "ionization": SyncleoSwitchDescription(
@@ -476,16 +476,15 @@ SWITCH_DESCRIPTIONS = {
         icon="mdi:snowflake-off",
         entity_category=EntityCategory.CONFIG
     ),
-    "damper": SyncleoSwitchDescription(
-        translation_key="damper_switch",
+    "damper_heater": SyncleoSwitchDescription(
+        translation_key="damper_heater",
         key="damper",
         coordinator_state="CMD_DAMPER",
         func=parse_hex_to_bool,
-        icon="mdi:swap-horizontal-circle-outline",
         entity_category=EntityCategory.CONFIG
     ),
     "display_off_heater": SyncleoSwitchDescription(
-        translation_key="display_off_heater_switch",
+        translation_key="display_off_heater",
         key="display_off_heater",
         coordinator_state="CMD_PROGRAM_DATA",
         program_index = "0",
@@ -494,11 +493,11 @@ SWITCH_DESCRIPTIONS = {
         entity_category=EntityCategory.CONFIG
     ),
     "half_power_heater": SyncleoSwitchDescription(
-        translation_key="half_power_heater_switch",
+        translation_key="half_power_heater",
         key="half_power_heater",
         coordinator_state="CMD_PROGRAM_DATA",
         program_index = "0",
-        byte_index = "0",
+        byte_index = "2",
         func=parse_hex_to_bool,
         entity_category=EntityCategory.CONFIG
     ),
@@ -514,6 +513,7 @@ class SyncleoSensorDescription(SyncleoEntityDescription):
     state_class: Optional[SensorStateClass] = None
     expendables_index: str = "0"
     program_index: str = "0"
+    byte_index: str = None
 
 SENSOR_DESCRIPTIONS = {
     "temperature": SyncleoSensorDescription(
@@ -535,16 +535,6 @@ SENSOR_DESCRIPTIONS = {
         coordinator_state="CMD_CURRENT_HUMIDITY",
         func=parse_humidity,
         icon="mdi:water-percent"
-    ),
-    "current_power": SyncleoSensorDescription(
-        translation_key="current_power",
-        key="current_power",
-        device_class=None,
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        coordinator_state="CMD_CURRENT_POWER",
-        func=parse_power,
-        icon="mdi:flash"
     ),
     "speed": SyncleoSensorDescription(
         translation_key="speed_sensor",
@@ -671,7 +661,8 @@ SENSOR_DESCRIPTIONS = {
         state_class=SensorStateClass.MEASUREMENT,
         coordinator_state="CMD_PROGRAM_DATA",
         program_index = "0",
-        func=parse_temp,
+        byte_index = "0",
+        func=parse_power,
         icon="mdi:equalizer",
     ),
     
