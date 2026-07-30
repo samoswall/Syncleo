@@ -258,7 +258,7 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
 
         preset_value = self._preset_modes[preset_mode]
         payload = bytes([int(preset_value)])
-        if int(device.devtype) == 46 and device.vendor == "RusClimate":
+        if int(self.device.devtype) == 46 and self.device.vendor == "RusClimate":
             await self.async_send_command(CMD_SPEED, b'\x01')
         await self.async_send_command(CMD_MODE, payload)
         # Обновляем состояние

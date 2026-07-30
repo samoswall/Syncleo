@@ -596,7 +596,7 @@ HOMMYN_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
     },
     46: {
         "climate": ["climate_heater_4mode"],
-        "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
+        "sensor": ["temperature_heater", "firmware", "device_type", "error", "current_power"],
         "switch": ["power", "sound", "backlight_bright", "child_lock", "damper_heater", "display_off_heater", "half_power_heater"],
         "number": ["temperature_difference_eco", "temperature_difference_antifrost"]
     },

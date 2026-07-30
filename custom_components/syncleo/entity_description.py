@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Optional, List
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
@@ -21,12 +22,22 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityDescription
 
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.setLevel(logging.DEBUG)
+
 # ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
 
 def parse_temp(data: bytes) -> float:
     """Парсинг температуры из байтов."""
     if len(data) >= 2:
         return int.from_bytes(data[:2], 'little') 
+    return 0.0
+
+def parse_temp_heater(data: bytes) -> float:
+    """Парсинг температуры из байтов."""
+    if len(data) >= 2:
+        _LOGGER.debug("Temp %s int %s float %s summ %s", data, int(data[0]), int(data[1]), int(data[0]) + (0.01 * int(data[1])))
+        return int(data[0]) + (0.01 * int(data[1]))
     return 0.0
 
 def parse_hex_to_int(data: bytes) -> int:
@@ -524,6 +535,16 @@ SENSOR_DESCRIPTIONS = {
         state_class=SensorStateClass.MEASUREMENT,
         coordinator_state="CMD_CURRENT_TEMPERATURE",
         func=parse_temp,
+        icon="mdi:thermometer"
+    ),
+    "temperature_heater": SyncleoSensorDescription(
+        key="temperature_heater",
+        translation_key="temperature_sensor",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        coordinator_state="CMD_CURRENT_TEMPERATURE",
+        func=parse_temp_heater,
         icon="mdi:thermometer"
     ),
     "humidity": SyncleoSensorDescription(
