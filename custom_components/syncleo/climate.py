@@ -23,7 +23,7 @@ from .const import (
     CMD_PROGRAM_DATA,
 )
 from .entity import SyncleoEntity
-from .entity_description import CLIMATE_DESCRIPTIONS, parse_temp
+from .entity_description import CLIMATE_DESCRIPTIONS, parse_temp, parse_temp_heater
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
@@ -115,7 +115,9 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
             return None
         if not self._coordinator_current:
             return None
-        return self._get_state_from_coordinator(self._coordinator_current, parse_temp)
+        if self._get_state_from_coordinator(self._coordinator_current, self._func) is None:
+            return None
+        return self._get_state_from_coordinator(self._coordinator_current, self._func)
 
     @property
     def target_temperature(self) -> Optional[float]:
@@ -124,7 +126,11 @@ class SyncleoClimateEntity(SyncleoEntity, ClimateEntity):
             return None
         if not self._coordinator_target:
             return None
-        return self._get_state_from_coordinator(self._coordinator_target, parse_temp)
+        if self._get_state_from_coordinator(self._coordinator_target, parse_temp) is None:
+            return None
+#        return self._get_state_from_coordinator(self._coordinator_target, parse_temp)
+        return max(self._attr_min_temp, min(self._get_state_from_coordinator(self._coordinator_target, parse_temp), self._attr_max_temp))
+
 
     @property
     def hvac_mode(self) -> Optional[HVACMode]:

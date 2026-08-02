@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Optional, List
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
@@ -22,9 +21,6 @@ from homeassistant.const import (
 )
 from homeassistant.helpers.entity import EntityDescription
 
-_LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.DEBUG)
-
 # ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
 
 def parse_temp(data: bytes) -> float:
@@ -36,7 +32,6 @@ def parse_temp(data: bytes) -> float:
 def parse_temp_heater(data: bytes) -> float:
     """Парсинг температуры из байтов."""
     if len(data) >= 2:
-        _LOGGER.debug("Temp %s int %s float %s summ %s", data, int(data[0]), int(data[1]), int(data[0]) + (0.01 * int(data[1])))
         return int(data[0]) + (0.01 * int(data[1]))
     return 0.0
 
@@ -411,7 +406,6 @@ SWITCH_DESCRIPTIONS = {
         key="backlight_bright",
         coordinator_state="CMD_BACKLIGHT",
         func=parse_hex_to_bool,
-#        icon="mdi:lightbulb",
         entity_category=EntityCategory.CONFIG
     ),
     "backlight_bright_pd": SyncleoSwitchDescription(
@@ -420,7 +414,6 @@ SWITCH_DESCRIPTIONS = {
         coordinator_state="CMD_PROGRAM_DATA",
         program_index="0",
         func=parse_hex_to_bool,
-#        icon="mdi:lightbulb",
         entity_category=EntityCategory.CONFIG
     ),
     "ionization": SyncleoSwitchDescription(
@@ -439,7 +432,7 @@ SWITCH_DESCRIPTIONS = {
         icon="mdi:fan-speed-2",
         entity_category=EntityCategory.CONFIG
     ),
-    "warmstream": SyncleoSwitchDescription(
+    "warm_stream": SyncleoSwitchDescription(
         translation_key="warm_stream_switch",
         key="warmstream",
         coordinator_state="CMD_WARMSTREAM",
@@ -456,7 +449,7 @@ SWITCH_DESCRIPTIONS = {
         entity_category=EntityCategory.CONFIG
     ),
     "night": SyncleoSwitchDescription(
-        translation_key="backlight_switch",
+        translation_key="night_switch",
         key="night_mode",
         coordinator_state="CMD_NIGHT",
         func=parse_hex_to_bool,
@@ -577,6 +570,16 @@ SENSOR_DESCRIPTIONS = {
         func=parse_weight,
         icon="mdi:weight-gram"
     ),
+    "weight_percent": SyncleoSensorDescription(
+        translation_key="weight_percent_sensor",
+        key="weight_percent",
+        device_class=None,
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        coordinator_state="CMD_WEIGHT",
+        func=parse_weight,
+        icon="mdi:weight"
+    ),
     "error": SyncleoSensorDescription(
         translation_key="error",
         key="error",
@@ -686,12 +689,7 @@ SENSOR_DESCRIPTIONS = {
         func=parse_power,
         icon="mdi:equalizer",
     ),
-    
-    
-    
-    
-    
-    
+
     "firmware": SyncleoSensorDescription(
         translation_key="firmware_version_sensor",
         key="firmware_version",
@@ -712,6 +710,23 @@ SENSOR_DESCRIPTIONS = {
     ),
 }
 
+# ---------- BINARY SENSOR ----------
+@dataclass(frozen=True)
+class SyncleoBinarySensorDescription(SyncleoEntityDescription):
+    """Описание для бинарных сенсора."""
+    device_class: Optional[SensorDeviceClass] = None
+    program_index: str = "0"
+    error_code: str = "0"
+
+BINARY_SENSOR_DESCRIPTIONS = {
+    "base": SyncleoBinarySensorDescription(
+        key="base",
+        translation_key="base_binary_sensor",
+        device_class=BinarySensorDeviceClass.PLUG,
+        coordinator_state = "CMD_ERROR",
+        error_code = "2"
+    ),
+}
 
 # ---------- SELECT ----------
 @dataclass(frozen=True)
@@ -1015,6 +1030,7 @@ CLIMATE_DESCRIPTIONS = {
         min_temp = 5,
         max_temp = 35,
         temp_step = 1,
+        func=parse_temp_heater,
     ),
 }
 

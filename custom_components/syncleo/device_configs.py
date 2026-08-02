@@ -169,8 +169,9 @@ POLARIS_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
     98: {
         "water_heater": ["kettle_with_tea_time"],
         "switch": ["power", "sound", "child_lock", "backlight"],
-        "sensor": ["temperature", "firmware", "device_type", "error", "weight"],
-        "select": ["select_tea_kettle"]
+        "sensor": ["temperature", "firmware", "device_type", "error", "weight", "weight_percent"],
+        "select": ["select_tea_kettle"],
+        "binary_sensor": ["base"]
     },
     105: {
         "water_heater": ["kettle"],
@@ -535,7 +536,7 @@ HOMMYN_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
     77: {
         "water_heater": ["water_boiler"],
         "sensor": ["temperature", "firmware", "device_type", "error", "anode_retain"],
-        "switch": ["power", "child_lock", "bss_mode", "smart_mode"]
+        "switch": ["power", "child_lock", "bss_mode", "smart_mode", "backlight_bright_pd"]
     },
 ##############################
 #        Увлажнители         #
@@ -584,14 +585,14 @@ HOMMYN_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
 ##############################
     6: {
         "climate": ["climate_heater"],
-        "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
+        "sensor": ["temperature_heater", "firmware", "device_type", "error", "current_power"],
         "switch": ["power", "sound", "backlight", "child_lock", "damper_heater", "display_off_heater"],
         "number": ["temperature_difference_eco", "temperature_difference_antifrost"]
         
     },
     14: {
         "climate": ["climate_heater"],
-        "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
+        "sensor": ["temperature_heater", "firmware", "device_type", "error", "current_power"],
         "switch": ["child_lock", "backlight"]
     },
     46: {
@@ -602,17 +603,26 @@ HOMMYN_DEVICE_CONFIGS: Dict[int, Dict[str, List[str]]] = {
     },
     47: {
         "climate": ["climate_heater"],
-        "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
+        "sensor": ["temperature_heater", "firmware", "device_type", "error", "current_power"],
         "switch": ["power", "sound", "backlight", "child_lock", "damper_heater", "display_off_heater"],
         "number": ["temperature_difference_eco", "temperature_difference_antifrost"]
     },
     49: {
         "climate": ["climate_heater"],
-        "sensor": ["temperature", "firmware", "device_type", "error", "current_power"],
+        "sensor": ["temperature_heater", "firmware", "device_type", "error", "current_power"],
         "switch": ["child_lock", "backlight"]
     },
+##############################
+#     Очистители воздуха     #
+##############################
+
+
 
 }
+
+
+
+
 
 # Маппинг типа устройства к конфигурации, если нет конкретной           временная заглушка, потом будет убрана!
 DEFAULT_CONFIGS: Dict[str, Dict[str, List[str]]] = {

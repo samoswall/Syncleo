@@ -113,6 +113,8 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
             return None
         if not self._coordinator_current:
             return None
+        if self._get_state_from_coordinator(self._coordinator_current, parse_temp) is None:
+            return None
         return max(self._attr_min_temp, min(self._get_state_from_coordinator(self._coordinator_current, parse_temp), self._attr_max_temp))
 
     @property
@@ -122,7 +124,9 @@ class SyncleoWaterHeaterEntity(SyncleoEntity, WaterHeaterEntity):
             return None
         if not self._coordinator_target:
             return None
-        return self._get_state_from_coordinator(self._coordinator_target, parse_temp)
+        if self._get_state_from_coordinator(self._coordinator_target, parse_temp) is None:
+            return None
+        return max(self._attr_min_temp, min(self._get_state_from_coordinator(self._coordinator_target, parse_temp), self._attr_max_temp))
 
     @property
     def current_operation(self) -> Optional[str]:
