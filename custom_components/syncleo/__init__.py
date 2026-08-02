@@ -8,11 +8,12 @@ from .coordinator import SyncleoCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
-DEBUG_ENABLED = False
+DEBUG_ENABLED = True
 
 
 PLATFORMS = [
     "sensor",
+    "binary_sensor",
     "switch",
     "water_heater",
     "humidifier",
