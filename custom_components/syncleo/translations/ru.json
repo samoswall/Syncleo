@@ -268,6 +268,9 @@
       "weight_sensor": {
         "name": "Вес"
       },
+      "weight_percent_sensor": {
+        "name": "Объем воды"
+      },
       "error": {
         "name": "Ошибка",
         "state": {
@@ -1062,8 +1065,8 @@
       "base_binary_sensor": {
         "name": "Положение",
         "state": {
-          "on": "Снят с базы",
-          "off": "На базе"
+          "on": "На базе",
+          "off": "Снят с базы"
         }
       },
       "lid_binary_sensor": {
