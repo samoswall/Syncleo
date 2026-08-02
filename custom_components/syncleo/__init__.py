@@ -8,7 +8,7 @@ from .coordinator import SyncleoCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.DEBUG)
-DEBUG_ENABLED = True
+DEBUG_ENABLED = False
 
 
 PLATFORMS = [
